@@ -252,7 +252,7 @@ class CreatePhotos < ActiveRecord::Migration[7.0]
       t.integer :commments_count, default: 0
       t.integer :likes_count, default: 0
       t.text :caption
-      t.references :owner, null: false, foreign_key: true
+      t.references :owner, null: false, foreign_key: { to_table :users }
 
       t.timestamps
     end
@@ -264,4 +264,89 @@ In the current seting, the foreign key is set to be required. If you want the re
 
 In this case, we want the foreign key to be a requirement because we have to have an owner ID for every photo, so set the null to true. This will set us up with index automatically. 
 
-10. (20 min) CreatePhotos
+11. Type `rails db:migrate`. It throws an error!
+
+```
+photogram-industrial rg-create-database % rails db:migrate
+== 20240701172445 CreatePhotos: migrating =====================================
+-- create_table(:photos)
+rails aborted!
+StandardError: An error has occurred, this and all later migrations canceled:
+
+PG::UndefinedTable: ERROR:  relation "owners" does not exist
+/workspaces/photogram-industrial/db/migrate/20240701172445_create_photos.rb:3:in `change'
+/workspaces/photogram-industrial/bin/rails:4:in `<main>'
+
+Caused by:
+ActiveRecord::StatementInvalid: PG::UndefinedTable: ERROR:  relation "owners" does not exist
+/workspaces/photogram-industrial/db/migrate/20240701172445_create_photos.rb:3:in `change'
+/workspaces/photogram-industrial/bin/rails:4:in `<main>'
+
+Caused by:
+PG::UndefinedTable: ERROR:  relation "owners" does not exist
+/workspaces/photogram-industrial/db/migrate/20240701172445_create_photos.rb:3:in `change'
+/workspaces/photogram-industrial/bin/rails:4:in `<main>'
+Tasks: TOP => db:migrate
+(See full trace by running task with --trace)
+```
+
+The main error message is that `relation "owners" does not exist.
+
+12. Modify the code:
+
+```
+class CreatePhotos < ActiveRecord::Migration[7.0]
+  def change
+    create_table :photos do |t|
+      t.string :image
+      t.integer :commments_count, default: 0
+      t.integer :likes_count, default: 0
+      t.text :caption
+      t.references :owner, null: false, foreign_key: { to_table: :users }
+
+      t.timestamps
+    end
+  end
+end
+```
+
+13. Re-run the command: `raisl db:migrate`.
+
+```
+photogram-industrial rg-create-database % rails db:migrate
+== 20240701172445 CreatePhotos: migrating =====================================
+-- create_table(:photos)
+   -> 0.0565s
+== 20240701172445 CreatePhotos: migrated (0.0566s) ============================
+
+Annotated (1): app/models/photo.rb
+```
+
+Visiting models/photo.rb shows the following. Rails automatically recognize that the ActiveTable class Photo belongs to owner.
+
+```
+class Photo < ApplicationRecord
+  belongs_to :owner
+end
+```
+
+Further modify the file into:
+
+```
+class Photo < ApplicationRecord
+  belongs_to :owner, class_name: "User"
+end
+```
+
+14. (25 min) Likewise, create a relationship from the user table to the photo table by modifying the models/user.rb file:
+
+```
+class User < ApplicationRecord
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable
+
+  has_many :own_photos, class_name: "Photo", foreign_key: "owner_id" 
+end
+```
