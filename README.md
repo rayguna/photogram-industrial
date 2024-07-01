@@ -310,7 +310,7 @@ class CreatePhotos < ActiveRecord::Migration[7.0]
 end
 ```
 
-13. Re-run the command: `raisl db:migrate`.
+13. Re-run the command: `rails db:migrate`.
 
 ```
 photogram-industrial rg-create-database % rails db:migrate
@@ -350,3 +350,17 @@ class User < ApplicationRecord
   has_many :own_photos, class_name: "Photo", foreign_key: "owner_id" 
 end
 ```
+
+### E. Establish hyperlinks - look at delivery tracker.
+
+1. Add navbar and cdn assets within the partial view html.
+
+2. Authenticate user by modifying the ApplicationController class as follows:
+
+```
+class ApplicationController < ActionController::Base
+  before_action :authenticate_user!
+  skip_forgery_protection
+end
+```
+3. Sign up a new account with alice@example.com; pas*****. After login in, only then you can visit: https://scaling-adventure-6r9qwqx4pjv3x6rq-3000.app.github.dev/rails/db/tables/photos/data in which you can see the two tables you created.
