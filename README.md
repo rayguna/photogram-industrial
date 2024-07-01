@@ -197,3 +197,71 @@ git add -A; git commit -m "Generated users"
 ```
 
 This sequence of commands (git add -A followed by git commit -m "Generated users") is commonly used when you want to quickly stage and commit all changes in one go.
+
+```
+photogram-industrial rg-create-database % git acm "Generated users"
+[rg-create-database 5c6324a] Generated users
+ 4 files changed, 125 insertions(+), 10 deletions(-)
+```
+
+8. Type in the terminal:
+
+```
+g sla
+
+or
+```
+git log --oneline --decorate --graph --all -s30
+``````
+
+9. (17 min) Generate the rest of the data models. Create users first.
+
+(18 mins) Do you want to create a scaffold (the entire RCAV) or you only want to generate a model? yes, we use scaffolds to generate the entire RCAV elements.
+
+10. (20 min) call the scaffolds commanmd.
+
+```
+rails generate scaffold photo image commments_count:integer likes_count:integer caption:text owner:references
+```
+
+Visit the generated file: db/migrate ..._create_photos. This is what you see:
+
+```
+class CreatePhotos < ActiveRecord::Migration[7.0]
+  def change
+    create_table :photos do |t|
+      t.string :image
+      t.integer :commments_count
+      t.integer :likes_count
+      t.text :caption
+      t.references :owner, null: false, foreign_key: true
+
+      t.timestamps
+    end
+  end
+end
+```
+
+Fix the above into:
+
+```
+class CreatePhotos < ActiveRecord::Migration[7.0]
+  def change
+    create_table :photos do |t|
+      t.string :image
+      t.integer :commments_count, default: 0
+      t.integer :likes_count, default: 0
+      t.text :caption
+      t.references :owner, null: false, foreign_key: true
+
+      t.timestamps
+    end
+  end
+end
+```
+
+In the current seting, the foreign key is set to be required. If you want the reference column to be optional, you can change it to null: true.
+
+In this case, we want the foreign key to be a requirement because we have to have an owner ID for every photo, so set the null to true. This will set us up with index automatically. 
+
+10. (20 min) CreatePhotos
