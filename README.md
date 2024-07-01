@@ -364,3 +364,18 @@ class ApplicationController < ActionController::Base
 end
 ```
 3. Sign up a new account with alice@example.com; pas*****. After login in, only then you can visit: https://scaling-adventure-6r9qwqx4pjv3x6rq-3000.app.github.dev/rails/db/tables/photos/data in which you can see the two tables you created.
+
+4. Undo changes because it caused issues.
+
+***
+
+TIPS:
+
+- Whever creating the devise gem, make sure to follow the instructions (numbered 1 through 4). The views/devise folder should be created.
+- To look at the route addresses, add to the url: .../rails/info/routes. The complete address is https://scaling-adventure-6r9qwqx4pjv3x6rq-3000.app.github.dev/rails/info/routes.
+- As a shortcut, you may use the path/url directly as the path.
+- When you call the different methods, be sure to specify the method in order for them to work correctly. E.g., for sign out, you need to specify the turbo_method: :delete.
+
+```
+<%= link_to "Sign out", destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link" %>
+```

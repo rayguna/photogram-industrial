@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  root "photos#index"
   devise_for :users
   resources :photos
 
@@ -9,6 +10,5 @@ Rails.application.routes.draw do
   # root "articles#index"
 
 
-  root "photos#index"
 
 end 
