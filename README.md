@@ -477,4 +477,23 @@ end
 3. (5:20 min) modify the migration file:
 db/migrate/..create_follow_request
 ```
+class CreateFollowRequests < ActiveRecord::Migration[7.0]
+  def change
+    create_table :follow_requests do |t|
+      t.references :recipient, null: false, foreign_key: { to_table: :users }, index: true
+      t.references :sender, null: false, foreign_key: { to_table: :users }, index: true
+      t.string :status, default: "pending"
+
+      t.timestamps
+    end
+  end
+end
 ```
+(6 min)
+
+4. Type `rails db:migrate`.
+
+5. commit changes to github: 
+
+  `git add -A`
+  'git commit -m "Generated follow requsts"`
