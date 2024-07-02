@@ -378,3 +378,38 @@ Video: https://share.descript.com/view/P3PGeVSVtMW
 1. Let's generate the rest of the resources using the scaffolds command.
 
 2. First, create and checkout a new branch from photogram 1. Type in the terminal `git checkout -b rg-photogram-industrial-2`.
+
+3. While in the new branch, create a comment table using the scaffold command:
+```
+rails generate scaffold comment author:references photo:references body:text
+```
+4. look at the newly created migration file: db/migrate/...create_comments file.
+
+5. Modify the migration file called create_comments as follows.
+
+```
+class CreateComments < ActiveRecord::Migration[7.0]
+  def change
+    create_table :comments do |t|
+      t.references :author, null: false, foreign_key: { to_table: :users }
+      t.references :photo, null: false, foreign_key: true, index: true
+      t.text :body
+
+      t.timestamps
+    end
+  end
+end
+```
+Accordingly, update the models/comment.rb file as follows:
+
+```
+class Comment < ApplicationRecord
+  belongs_to :author, class_name: "User"
+  belongs_to :photo
+end
+```
+
+6. commit changes: 
+
+`git add -A`
+`git commit -m "Generated comments"`
