@@ -6,7 +6,5 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "articles#index"
 
-  #root "photos#index"
+  root "photos#index"
 end 
-
-

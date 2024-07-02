@@ -350,3 +350,19 @@ class User < ApplicationRecord
   has_many :own_photos, class_name: "Photo", foreign_key: "owner_id" 
 end
 ```
+
+
+
+### Start over
+
+1. Create a new branch: 
+
+```
+photogram-industrial (HEAD detached at dceb327) %  git switch -c dceb327
+Switched to a new branch 'dceb327'
+```
+
+2. Reinstall devise:
+`rails generate devise:install`
+
+Follow instructions. In particular, end with writing in the terminal the command: `rails g devise:views`.
