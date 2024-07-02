@@ -496,4 +496,52 @@ end
 5. commit changes to github: 
 
   `git add -A`
-  'git commit -m "Generated follow requsts"`
+  `git commit -m "Generated follow requests table."`
+  `git push`
+  (7 min)
+
+### E. Generate create likes table
+
+1. Type the command: `rails generate scaffold like fan:references photo:references`.
+
+2. Modify the migrate file as follows:
+
+```
+class CreateLikes < ActiveRecord::Migration[7.0]
+  def change
+    create_table :likes do |t|
+      t.references :fan, null: false, foreign_key: { to_table: :users }
+      t.references :photo, null: false, foreign_key: true
+
+      t.timestamps
+    end
+  end
+end
+```
+
+3. Make changes to the models file:
+
+```
+# app/models/like.rb
+
+class Like < ApplicationRecord
+  belongs_to :fan, class_name: "User"
+  belongs_to :photo
+end
+```
+
+4. Type `rails db:migrate`.
+
+```
+photogram-industrial rg-photogram-industrial-2 % rails db:migrate
+== 20240702192323 CreateLikes: migrating ======================================
+-- create_table(:likes)
+   -> 0.0526s
+== 20240702192323 CreateLikes: migrated (0.0527s) =============================
+```
+
+5. commit to github wuth:
+
+```
+g acm "Generated likes table".
+```
