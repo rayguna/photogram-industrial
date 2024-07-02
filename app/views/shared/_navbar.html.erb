@@ -11,16 +11,60 @@
       </ul>
 
       <ul class="navbar-nav">
+      <%if current_user == nil%>
         <li class="nav-item">
           <%= link_to "Sign in", new_user_session_path, class: "nav-link" %>
         </li>
-        <li class="nav-item">
-          <%= link_to "Sign out", destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link" %>
-        </li>
-
+      
         <li class="nav-item">
           <%= link_to "Sign up", new_user_registration_path, class: "nav-link" %>
         </li>
+
+      <%else%>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/alice/feed">
+              <i class="fas fa-users fa-fw"></i></i>
+
+              Feed
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/alice/discover">
+              <i class="fas fa-compass fa-fw"></i>
+
+              Discover 
+            </a>
+          </li>
+      </ul>
+
+      <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/photos/new">
+              <i class="fas fa-plus-circle"></i>
+
+              Add post
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/alice">
+              <i class="fas fa-home fa-fw"></i>
+
+              Your profile
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              alice
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="/users/edit">Edit profile</a>
+              <a class="dropdown-item" rel="nofollow" data-method="delete" href="/users/sign_out">Sign out<a>
+            </div>
+          </li>
+
+      <%end%>
+
       </ul>
     </div>
   </div>

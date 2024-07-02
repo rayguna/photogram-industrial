@@ -1,20 +1,57 @@
-<h2>Log in</h2>
+<div class="container">
+  <div class="row mb-4">
+    <div class="col-md-6 offset-md-3">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+  You need to sign in or sign up before continuing.
 
-<%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="form-inputs">
-    <%= f.input :email,
-                required: false,
-                autofocus: true,
-                input_html: { autocomplete: "email" } %>
-    <%= f.input :password,
-                required: false,
-                input_html: { autocomplete: "current-password" } %>
-    <%= f.input :remember_me, as: :boolean if devise_mapping.rememberable? %>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+
+</div>
   </div>
+    </div>
 
-  <div class="form-actions">
-    <%= f.button :submit, "Log in" %>
+      <div class="row">
+        <div class="offset-md-3 col-md-6">
+          <div class="card mb-3">
+            <h5 class="card-header">
+              User Sign In
+            </h5>
+
+            <div class="card-body">
+
+                <div class="alert alert-danger" role="alert">
+                  You need to sign in or sign up before continuing.
+                </div>
+
+
+              <form class="mb-3" id="new_user" novalidate="novalidate" action="/users/sign_in" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token">
+                <div class="form-group">
+                  <label for="user_email">Email</label>
+                  <input autofocus="autofocus" class="form-control" type="email" value="" name="user[email]" id="user_email" />
+                </div>
+
+                <div class="form-group">
+                  <label for="user_password">Password</label>
+                  <input autocomplete="off" class="form-control" type="password" name="user[password]" id="user_password" />
+                </div>
+
+                  <div class="form-check mb-3">
+                    <label class="form-check-label" for="user_remember_me">
+                      <input name="user[remember_me]" type="hidden" value="0" /><input class="form-check-input" type="checkbox" value="1" name="user[remember_me]" id="user_remember_me" /> Remember me
+                    </label>
+                  </div>
+
+                <input type="submit" name="commit" value="Sign in" class="btn btn-outline-primary btn-block" data-disable-with="Sign in" />
+
+                <hr>
+            
+              <%= render "devise/shared/links" %>
+              
+              
+            </div>
+          </div>
+    </div>
   </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>

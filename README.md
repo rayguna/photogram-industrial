@@ -369,7 +369,7 @@ end
 
 ***
 
-TIPS:
+### TIPS:
 
 - Whever creating the devise gem, make sure to follow the instructions (numbered 1 through 4). The views/devise folder should be created.
 - To look at the route addresses, add to the url: .../rails/info/routes. The complete address is https://scaling-adventure-6r9qwqx4pjv3x6rq-3000.app.github.dev/rails/info/routes.
@@ -378,4 +378,25 @@ TIPS:
 
 ```
 <%= link_to "Sign out", destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link" %>
+```
+
+### F. Making the navbar different between signed in and signed out
+
+1. Add an if-else statement as follows within the shared/_navbar.html.erb file.
+
+```
+      <%if current_user == nil%>
+        <li class="nav-item">
+          <%= link_to "Sign in", new_user_session_path, class: "nav-link" %>
+        </li>
+      
+        <li class="nav-item">
+          <%= link_to "Sign up", new_user_registration_path, class: "nav-link" %>
+        </li>
+
+      <%else%>
+        <li class="nav-item">
+          <%= link_to "Sign out", destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link" %>
+        </li>
+      <%end%>
 ```
