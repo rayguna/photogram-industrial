@@ -12,6 +12,8 @@ Cheatsheet: https://learn.firstdraft.com/
 
 Notes:
 
+### Part I
+
 ### A. Set up devise
 
 1. Install devise by including `gem "devise"` into the Gemfile. Then, typing `bundle install`.
@@ -368,3 +370,11 @@ Switched to a new branch 'dceb327'
 Follow instructions. In particular, end with writing in the terminal the command: `rails g devise:views`.
 
 3. Add views/shared folder to refactor partial view html files. Add if-else statement within _navbar.html.erb to differentiate between signed in and signed out navbars. 
+
+### Part II
+
+Video: https://share.descript.com/view/P3PGeVSVtMW
+
+1. Let's generate the rest of the resources using the scaffolds command.
+
+2. First, create and checkout a new branch from photogram 1. Type in the terminal `git checkout -b rg-photogram-industrial-2`.
