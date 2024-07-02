@@ -461,7 +461,7 @@ After:
 
       <div class="card-body">
 
-        <form class="mb-3" id="new_user" novalidate="novalidate" action="/users" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="f943hLZs083XXTWUqoT-p1JxaL_RTJIUq38rTn8V1F-dLevBhqw-pcgRX-mqk6HrLeFNqiP0-qHr7RRM5xs9Aw" />
+        <form class="mb-3" id="new_user" novalidate="novalidate" action="/users" accept-charset="UTF-8" method="post"><name="authenticity_token" value="<%= form_authenticity_token %>" input type="hidden">
           <div class="form-group">
 
             <label for="user_email">Email</label>
@@ -562,8 +562,19 @@ After:
 </div>
 ```
 
-4. Issue: The variables in the form is not passed on to the table. 
+4. For the forms, make sure to add a hidden authenticity tokens:
+
+```
+<form class="mb-3" id="new_user" novalidate="novalidate" action="/users/sign_in" accept-charset="UTF-8" method="post"><name="authenticity_token" value="<%= form_authenticity_token %>" input type="hidden">
+                <div class="form-group">
+                  <label for="user_email">Email</label>
+                  <input autofocus="autofocus" class="form-control" type="email" value="" name="user[email]" id="user_email" />
+                </div>
+```
+
+5. Issue: The variables in the form is not passed on to the table. 
 Approach: need to know which method (route) the form information is passed to. 
 
+Notes on using devise on rails: https://www.digitalocean.com/community/tutorials/how-to-set-up-user-authentication-with-devise-in-a-rails-7-application
 
 ***

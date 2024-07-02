@@ -27,7 +27,7 @@
                 </div>
 
 
-              <form class="mb-3" id="new_user" novalidate="novalidate" action="/users/sign_in" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token">
+              <form class="mb-3" id="new_user" novalidate="novalidate" action="/users/sign_in" accept-charset="UTF-8" method="post"><name="authenticity_token" value="<%= form_authenticity_token %>" input type="hidden">
                 <div class="form-group">
                   <label for="user_email">Email</label>
                   <input autofocus="autofocus" class="form-control" type="email" value="" name="user[email]" id="user_email" />
