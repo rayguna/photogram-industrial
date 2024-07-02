@@ -540,8 +540,44 @@ photogram-industrial rg-photogram-industrial-2 % rails db:migrate
 == 20240702192323 CreateLikes: migrated (0.0527s) =============================
 ```
 
-5. commit to github wuth:
+5. commit to github with:
 
 ```
-g acm "Generated likes table".
+photogram-industrial rg-photogram-industrial-2 % g acm "Generate likes table."
+[rg-photogram-industrial-2 4bad710] Generate likes table.
+ 15 files changed, 255 insertions(+), 2 deletions(-)
+ create mode 100644 app/controllers/likes_controller.rb
+ create mode 100644 app/models/like.rb
+ create mode 100644 app/views/likes/_form.html.erb
+ create mode 100644 app/views/likes/_like.html.erb
+ create mode 100644 app/views/likes/_like.json.jbuilder
+ create mode 100644 app/views/likes/edit.html.erb
+ create mode 100644 app/views/likes/index.html.erb
+ create mode 100644 app/views/likes/index.json.jbuilder
+ create mode 100644 app/views/likes/new.html.erb
+ create mode 100644 app/views/likes/show.html.erb
+ create mode 100644 app/views/likes/show.json.jbuilder
+ create mode 100644 db/migrate/20240702192323_create_likes.rb
+ ```
+
+ Then, type `git push`.
+
 ```
+photogram-industrial rg-photogram-industrial-2 % git push
+Enumerating objects: 36, done.
+Counting objects: 100% (36/36), done.
+Delta compression using up to 2 threads
+Compressing objects: 100% (24/24), done.
+Writing objects: 100% (25/25), 3.86 KiB | 1.29 MiB/s, done.
+Total 25 (delta 11), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (11/11), completed with 10 local objects.
+To https://github.com/rayguna/photogram-industrial
+   405e34d..4bad710  rg-photogram-industrial-2 -> rg-photogram-industrial-2
+```
+(8 min)
+
+### Open up a pull request
+(9 min)
+
+1. Go to the repository and click on "Compare & pull request". Change the title to photogram (Photogram Industrial 2 (rg)). 
+2. Click on Create pull request. 
