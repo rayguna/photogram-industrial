@@ -367,4 +367,4 @@ Switched to a new branch 'dceb327'
 
 Follow instructions. In particular, end with writing in the terminal the command: `rails g devise:views`.
 
-3. Add views/shared folder to refactor partial view html files. Add if-else statement within _navbar.html.erb to differnetiate between signed in and signed out navbars. 
+3. Add views/shared folder to refactor partial view html files. Add if-else statement within _navbar.html.erb to differentiate between signed in and signed out navbars. 
