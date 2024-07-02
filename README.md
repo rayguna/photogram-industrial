@@ -401,6 +401,10 @@ end
       <%end%>
 ```
 
-2. Need to delete alice username because it seems corrupted.
+2. Need to delete alice username because it seems corrupted. To empty the table"
+
+```
+User.delete_all
+```
 
 ***
