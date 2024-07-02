@@ -400,3 +400,7 @@ end
         </li>
       <%end%>
 ```
+
+2. Need to delete alice username because it seems corrupted.
+
+***
