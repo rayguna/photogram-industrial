@@ -458,3 +458,23 @@ git commit -m "Generated comments"
 ```
 
 #### C. Create follow request table
+
+1. (5 min) Type in the terminal: 
+```
+rails generate scaffold follow_request recipient:references sender:references status
+```
+
+2. Modify the models file:
+
+app/models/follow_request.rb
+```
+class FollowRequest < ApplicationRecord
+  belongs_to :recipient, class_name: "User"
+  belongs_to :sender, class_name: "User"
+end
+```
+
+3. (5:20 min) modify the migration file:
+db/migrate/..create_follow_request
+```
+```
