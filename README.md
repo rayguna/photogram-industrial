@@ -741,3 +741,79 @@ photogram-industrial rg-photogram-industrial-2 % rake db:migrate
 == 20240702213802 AddPhotosCountToUsers: migrated (0.0289s) ===================
 ```
 
+### I. Direct assocations
+
+1. Each belongs_to has an inverse, has_many.
+
+2. In the Comment model (app/models/comment.rb), we see a belongs_to :author .... That means, for User we need:
+
+```
+# app/models/user.rb
+
+class User < ApplicationRecord
+  # ...
+  has_many :comments, foreign_key: :author_id
+end
+```
+
+We need to specify that the foreign key column in comments is not user_id, but rather author_id. We don’t need to say class_name: "Comment", because it matches with the method name has_many :comments.
+
+The Comment model also contains a belongs_to :photo .... That means, for Photo we need:
+
+```
+# app/models/photo.rb
+
+class Photo < ApplicationRecord
+  # ...
+  has_many :comments
+end
+```
+
+3. In FollowRequest, we have belongs_to :recipient and belongs_to :sender, so we need two corresponding associations in User:
+
+```
+  has_many :sent_follow_requests, foreign_key: :sender_id, class_name: "FollowRequest"
+  has_many :received_follow_requests, foreign_key: :recipient_id, class_name: "FollowRequest"
+```
+
+follow_requests cannot be repeated twice and they are differentiated with sent_follow_requests and received_follow_requests.
+
+4. On to Like, we find belongs_to :fan and belongs_to :photo. So, we need corresponding has_manys in User and Photo. First for User:
+
+```
+# app/models/user.rb
+
+class User < ApplicationRecord
+  # ...
+  has_many :likes, foreign_key: :fan_id
+end
+```
+
+Then for Photo:
+
+```
+# app/models/photo.rb
+
+class Photo < ApplicationRecord
+  # ...
+  has_many :likes
+end
+```
+
+5. And, while we’re in that Photo model, we see that we need a has_many for the User model to go with the belongs_to: owner. So back in the User model:
+
+```
+# app/models/user.rb
+
+class User < ApplicationRecord
+  # ...
+  has_many :own_photos, foreign_key: :owner_id, class_name: "Photo"
+end
+```
+
+6. Since the User is going to have a few different associations to Photo, we gave this one a distinct method name and pointed it to the correct table.
+
+At some point, we will check the associations.
+
+
+### J. Indirect Associations
