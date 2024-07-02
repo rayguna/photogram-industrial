@@ -581,3 +581,163 @@ To https://github.com/rayguna/photogram-industrial
 
 1. Go to the repository and click on "Compare & pull request". Change the title to photogram (Photogram Industrial 2 (rg)). 
 2. Click on Create pull request. 
+
+You don't have to do this yet for now.
+
+### F. Checkpoint
+
+1. At this point, it is good to check the created tables by visiting:https://scaling-adventure-6r9qwqx4pjv3x6rq-3000.app.github.dev/rails/db. YOu should have 5 tables: comments, follow_requests, likes, photos, and users.
+
+### III. Association accessors
+
+1. We have our resources in place. Now it’s time to flesh out the business logic in our models.
+
+2. Most of the associations have been done, but let's check and modify as needed.
+
+3. the belongs_to command  automatically sets the foreign key to be true. If you want to make the foreign key blank or optional, you may set the keyword `optional: true`. Review the files in the models files.
+
+### G. Belong_to TIPS
+
+```
+In standard Rails applications, the default is opposite: belongs_to adds an automatic validation to foreign key columns enforcing the presence of a valid value unless you explicitly add the option optional: true.
+
+So: if you decided to remove the null: false database constraint from any of your foreign key columns in the migration file (e.g., change t.references :recipient, null: false ... to t.references :recipient, null: true ...), then you should also add the optional: true option to the corresponding belongs_to association accessor.
+
+So remember — if you’re ever in the situation of:
+
+you’re trying to save a record
+
+the save is failing
+
+you’re doing the standard debugging technique of printing out zebra.errors.full_messages
+
+you’re seeing an inexplicable validation error message saying that a foreign key column is blank
+
+now you know where the validation is coming from: belongs_to adds it automatically
+
+so figure out why you’re not providing a valid foreign key (usually it is because the parent object failed to save for its own validation reasons)
+```
+
+(11 min)
+
+Note the counter_cache option to keep track of counts.
+
+db/migrate/schema.rb file
+
+### H. Annotate gem for :countter_cache
+
+1. 
+(13 min)
+- This file tells us the current state of the database whenever the rails db:migrate command is called.
+- NEVER edit the schema.rb file. It is auto-generated whenever you run rake db:migrate.
+- Use the anotate gem to decide where to add the :counter_cache.
+
+ref.: https://github.com/ctran/annotate_models
+
+2. Add the gem to the :development group in our Gemfile. 
+
+```
+# Gemfile
+
+# ...
+group :development do
+  gem 'annotate'
+# ...
+```
+
+3. After the gem is installed, you can run: `annotate --models` or `rails g annotate:install` (this alternative command is similar to how we finished installing Devise).
+
+This command will create a rake task file lib/tasks/auto_annotate_models.rake, so that anytime we run rake db:migrate the annotation is run automatically.
+
+4. At the top of our Like model in app/models/like.rb, we should see the helpful annotations:
+
+# == Schema Information
+#
+# Table name: likes
+#
+#  id         :bigint           not null, primary key
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  fan_id     :bigint           not null
+#  photo_id   :bigint           not null
+
+5. Now let’s get back to what we were doing before: adding the :counter_cache to any belongs_to whenever I’m trying to keep track of the number of children objects that I’ve got.
+
+Let’s start with the Comment model
+
+```
+# app/models/comment.rb
+
+# == Schema Information
+#
+# Table name: comments
+#
+#  id         :bigint           not null, primary key
+#  body       :text
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  author_id  :bigint           not null
+#  photo_id   :bigint           not null
+# ...
+
+class Comment < ApplicationRecord
+  belongs_to :author, class_name: "User"
+  belongs_to :photo
+end
+```
+
+Anytime a comment is created, do I want to update the author with the count of the comments? We were planning to do that because we added a comments_count column in the users table:
+
+6. modify `app/models/comment.rb` as follows:
+
+```
+class Comment < ApplicationRecord
+  belongs_to :author, class_name: "User", counter_cache: true
+  belongs_to :photo, counter_cache: true
+end
+```
+
+7. For this to work, you have to have a column in the user table called exactly comments_count. We also want to keep count on the belongs_to :photo, so add the counter_cache: true there as well.
+
+Now in the Like model:
+
+```
+# app/models/like.rb
+
+# ...
+class Like < ApplicationRecord
+  belongs_to :fan, class_name: "User", counter_cache: true
+  belongs_to :photo, counter_cache: true
+end
+```
+
+Also modify the photo model:
+
+```
+# app/models/photo.rb
+
+# ...
+class Photo < ApplicationRecord
+  belongs_to :owner, class_name: "User", counter_cache: true
+  has_many :comments
+end
+```
+
+8. Also add photo count to users:
+
+```
+photogram-industrial rg-photogram-industrial-2 % rails g migration AddPhotosCountToUsers photos_count:integer
+      invoke  active_record
+      create    db/migrate/20240702213802_add_photos_count_to_users.rb
+```
+
+Then, type: `rake db:migrate`.
+
+```
+photogram-industrial rg-photogram-industrial-2 % rake db:migrate
+== 20240702213802 AddPhotosCountToUsers: migrating ============================
+-- add_column(:users, :photos_count, :integer)
+   -> 0.0288s
+== 20240702213802 AddPhotosCountToUsers: migrated (0.0289s) ===================
+```
+
