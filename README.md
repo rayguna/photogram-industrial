@@ -375,6 +375,8 @@ Follow instructions. In particular, end with writing in the terminal the command
 
 Video: https://share.descript.com/view/P3PGeVSVtMW
 
+#### A. create a new table called comments
+
 1. Let's generate the rest of the resources using the scaffolds command.
 
 2. First, create and checkout a new branch from photogram 1. Type in the terminal `git checkout -b rg-photogram-industrial-2`.
@@ -391,15 +393,18 @@ rails generate scaffold comment author:references photo:references body:text
 class CreateComments < ActiveRecord::Migration[7.0]
   def change
     create_table :comments do |t|
-      t.references :author, null: false, foreign_key: { to_table: :users }
+      t.references :author, null: false, foreign_key: { to_table: :users }, index: false
       t.references :photo, null: false, foreign_key: true, index: true
-      t.text :body
+      t.text :body, null: false
 
       t.timestamps
     end
   end
 end
 ```
+
+7. we are using author_id as a foreign key, which we need to point to the users table; and we don’t want empty messages so we constrain text to not be empty with null: false.
+
 Accordingly, update the models/comment.rb file as follows:
 
 ```
@@ -413,3 +418,43 @@ end
 
 `git add -A`
 `git commit -m "Generated comments"`
+
+(4 min) The instructor forgot to create a branch at the beginning.
+
+### B. Update table relationships
+
+1. modify the following file as well
+
+```
+# app/models/user.rb
+
+class User < ApplicationRecord
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable
+  
+  has_many :own_photos, class_name: "Photo", foreign_key: "owner_id"
+  has_many :comments, foreign_key: "author_id"
+end
+```
+
+2. modify photo models
+
+```
+# app/models/photo.rb
+
+class Photo < ApplicationRecord
+  belongs_to :owner, class_name: "User"
+  has_many :comments
+end
+```
+
+3. commit changes to github:
+
+```
+git add -A 
+git commit -m "Generated comments"
+```
+
+#### C. Create follow request table
