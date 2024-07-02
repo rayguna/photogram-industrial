@@ -401,10 +401,169 @@ end
       <%end%>
 ```
 
-2. Need to delete alice username because it seems corrupted. To empty the table"
+### G. sign-in and sign-out
+
+1. Need to delete alice username because it seems corrupted. To empty the table:
 
 ```
 User.delete_all
 ```
+
+2. Implement bootstrap to the sign-in page - views/sessions/new.html.erb.
+
+3. Implement bootstrap to the sign up page - views/registrations/new.html.erb
+
+Before:
+```
+<h2>Sign up</h2>
+
+<%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :email,
+                required: true,
+                autofocus: true,
+                input_html: { autocomplete: "email" }%>
+    <%= f.input :password,
+                required: true,
+                hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length),
+                input_html: { autocomplete: "new-password" } %>
+    <%= f.input :password_confirmation,
+                required: true,
+                input_html: { autocomplete: "new-password" } %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit, "Sign up" %>
+  </div>
+<% end %>
+
+<%= render "devise/shared/links" %>
+```
+
+After:
+
+```
+<div class="container">
+    <div class="row mb-4">
+      <div class="col-md-6 offset-md-3">
+
+      </div>
+    </div>
+
+  <div class="row">
+    <div class="offset-md-3 col-md-6">
+      <div class="card mb-3">
+        <h5 class="card-header">
+        User Sign Up
+        </h5>
+
+      <div class="card-body">
+
+        <form class="mb-3" id="new_user" novalidate="novalidate" action="/users" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="f943hLZs083XXTWUqoT-p1JxaL_RTJIUq38rTn8V1F-dLevBhqw-pcgRX-mqk6HrLeFNqiP0-qHr7RRM5xs9Aw" />
+          <div class="form-group">
+
+            <label for="user_email">Email</label>
+
+            <input class="form-control" autofocus="autofocus" type="email" value="" name="user[email]" id="user_email" />
+
+          </div>
+
+          <div class="form-group">
+
+            <label for="user_password">Password</label>
+
+            <input class="form-control" type="password" name="user[password]" id="user_password" />
+
+          </div>
+
+          <div class="form-group">
+
+            <label for="user_password_confirmation">Password confirmation</label>
+
+            <input class="form-control" type="password" name="user[password_confirmation]" id="user_password_confirmation" />
+
+          </div>
+
+          <!-- Devise Input for username start -->
+          <div class="form-group">
+
+
+            <label for="user_username">Username</label>
+
+            <input class="form-control" placeholder="Enter username" type="text" name="user[username]" id="user_username" />
+
+          </div>
+          <!-- Devise Input for username end -->
+
+          <!-- Devise Input for name start -->
+          <div class="form-group">
+
+
+
+            <label for="user_name">Name</label>
+
+            <input class="form-control" placeholder="Enter name" type="text" name="user[name]" id="user_name" />
+
+          </div>
+          <!-- Devise Input for name end -->          
+          <!-- Devise Input for avatar_image start -->
+          <div class="form-group">
+
+            <label for="user_avatar_image">Avatar image</label>
+
+            <input class="form-control" placeholder="Enter avatar image" type="text" value="avatar_placeholder.png" name="user[avatar_image]" id="user_avatar_image" />
+
+          </div>
+          <!-- Devise Input for avatar_image end -->
+          
+          <!-- Devise Input for bio start -->
+          <div class="form-group">
+
+            <label for="user_bio">Bio</labe>
+
+            <input class="form-control" placeholder="Enter bio" type="text" name="user[bio]" id="user_bio" />
+
+          </div>
+          <!-- Devise Input for bio end -->
+          
+          <!-- Devise Input for private start -->
+          <div class="form-group">
+
+            <div class="custom-control custom-checkbox">
+              <input name="user[private]" type="hidden" value="0" /><input class="custom-control-input" type="checkbox" value="1" checked="checked" name="user[private]" id="user_private" />
+              <label class="custom-control-label" for="user_private">Private</label>
+            </div>
+
+          </div>
+          <!-- Devise Input for private end -->
+          <!-- Devise Input for website start -->
+          <div class="form-group">
+
+            <label for="user_website">Website</label>
+
+            <input class="form-control" placeholder="Enter website" type="text" name="user[website]" id="user_website" />
+
+          </div>
+          <!-- Devise Input for website end -->
+          <button name="button" type="submit" class="btn btn-outline-primary btn-block">Create User</button>
+
+          <hr>
+
+            <a href="/users/sign_in">Log in</a><br />
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+```
+
+4. Issue: The variables in the form is not passed on to the table. 
+Approach: need to know which method (route) the form information is passed to. 
+
 
 ***
