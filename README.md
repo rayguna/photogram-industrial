@@ -10,9 +10,19 @@ Grading: https://grades.firstdraft.com/resources/9af73a93-b73e-492a-809a-677db28
 
 Cheatsheet: https://learn.firstdraft.com/
 
+### TOC
+
+[Part 1](#1)
+
+[Part 2](#2)
+
+[Part 3](#3)
+
+***
+
 Notes:
 
-### Part I
+### <a id="1">Part 1</a>
 
 ### A. Set up devise
 
@@ -214,7 +224,7 @@ g sla
 or
 ```
 git log --oneline --decorate --graph --all -s30
-``````
+```
 
 9. (17 min) Generate the rest of the data models. Create users first.
 
@@ -371,7 +381,7 @@ Follow instructions. In particular, end with writing in the terminal the command
 
 3. Add views/shared folder to refactor partial view html files. Add if-else statement within _navbar.html.erb to differentiate between signed in and signed out navbars. 
 
-### Part II
+### <a id="2">Part 2</a>
 
 Video: https://share.descript.com/view/P3PGeVSVtMW
 
@@ -637,12 +647,12 @@ ref.: https://github.com/ctran/annotate_models
 2. Add the gem to the :development group in our Gemfile. 
 
 ```
-# Gemfile
+#Gemfile
 
-# ...
+#...
 group :development do
   gem 'annotate'
-# ...
+#...
 ```
 
 3. After the gem is installed, you can run: `annotate --models` or `rails g annotate:install` (this alternative command is similar to how we finished installing Devise).
@@ -651,34 +661,34 @@ This command will create a rake task file lib/tasks/auto_annotate_models.rake, s
 
 4. At the top of our Like model in app/models/like.rb, we should see the helpful annotations:
 
-# == Schema Information
-#
-# Table name: likes
-#
-#  id         :bigint           not null, primary key
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  fan_id     :bigint           not null
-#  photo_id   :bigint           not null
+#== Schema Information
+
+#Table name: likes
+
+#id         :bigint           not null, primary key
+#created_at :datetime         not null
+#updated_at :datetime         not null
+#fan_id     :bigint           not null
+#photo_id   :bigint           not null
 
 5. Now let’s get back to what we were doing before: adding the :counter_cache to any belongs_to whenever I’m trying to keep track of the number of children objects that I’ve got.
 
 Let’s start with the Comment model
 
 ```
-# app/models/comment.rb
+#app/models/comment.rb
 
-# == Schema Information
-#
-# Table name: comments
-#
-#  id         :bigint           not null, primary key
-#  body       :text
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  author_id  :bigint           not null
-#  photo_id   :bigint           not null
-# ...
+#== Schema Information
+
+#Table name: comments
+
+#id         :bigint           not null, primary key
+#body       :text
+#created_at :datetime         not null
+#updated_at :datetime         not null
+#author_id  :bigint           not null
+#photo_id   :bigint           not null
+#...
 
 class Comment < ApplicationRecord
   belongs_to :author, class_name: "User"
@@ -702,9 +712,9 @@ end
 Now in the Like model:
 
 ```
-# app/models/like.rb
+#app/models/like.rb
 
-# ...
+#...
 class Like < ApplicationRecord
   belongs_to :fan, class_name: "User", counter_cache: true
   belongs_to :photo, counter_cache: true
@@ -714,9 +724,9 @@ end
 Also modify the photo model:
 
 ```
-# app/models/photo.rb
+#app/models/photo.rb
 
-# ...
+#...
 class Photo < ApplicationRecord
   belongs_to :owner, class_name: "User", counter_cache: true
   has_many :comments
@@ -748,10 +758,10 @@ photogram-industrial rg-photogram-industrial-2 % rake db:migrate
 2. In the Comment model (app/models/comment.rb), we see a belongs_to :author .... That means, for User we need:
 
 ```
-# app/models/user.rb
+#app/models/user.rb
 
 class User < ApplicationRecord
-  # ...
+  #...
   has_many :comments, foreign_key: :author_id
 end
 ```
@@ -761,10 +771,10 @@ We need to specify that the foreign key column in comments is not user_id, but r
 The Comment model also contains a belongs_to :photo .... That means, for Photo we need:
 
 ```
-# app/models/photo.rb
+#app/models/photo.rb
 
 class Photo < ApplicationRecord
-  # ...
+  #...
   has_many :comments
 end
 ```
@@ -781,10 +791,10 @@ follow_requests cannot be repeated twice and they are differentiated with sent_f
 4. On to Like, we find belongs_to :fan and belongs_to :photo. So, we need corresponding has_manys in User and Photo. First for User:
 
 ```
-# app/models/user.rb
+#app/models/user.rb
 
 class User < ApplicationRecord
-  # ...
+  #...
   has_many :likes, foreign_key: :fan_id
 end
 ```
@@ -792,10 +802,10 @@ end
 Then for Photo:
 
 ```
-# app/models/photo.rb
+#app/models/photo.rb
 
 class Photo < ApplicationRecord
-  # ...
+  #...
   has_many :likes
 end
 ```
@@ -803,10 +813,10 @@ end
 5. And, while we’re in that Photo model, we see that we need a has_many for the User model to go with the belongs_to: owner. So back in the User model:
 
 ```
-# app/models/user.rb
+#app/models/user.rb
 
 class User < ApplicationRecord
-  # ...
+  #...
   has_many :own_photos, foreign_key: :owner_id, class_name: "Photo"
 end
 ```
@@ -826,10 +836,10 @@ At some point, we will check the associations.
   - We need to go the Photo model, and add a has_many association for the fans of each photo that goes through the likes on the photo to the User model:
 
     ```
-    # app/models/photo.rb
+    #app/models/photo.rb
 
     class Photo < ApplicationRecord
-      # ...
+      #...
       has_many :likes
       has_many :fans, through: :likes
     end
@@ -841,8 +851,8 @@ At some point, we will check the associations.
 
     ```
     class User < ApplicationRecord
-      # Include default devise modules. Others available are:
-      # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+      #Include default devise modules. Others available are:
+      #:confirmable, :lockable, :timeoutable, :trackable and :omniauthable
       devise :database_authenticatable, :registerable,
             :recoverable, :rememberable, :validatable
 
@@ -888,7 +898,7 @@ Then: `git commit -m "generated users with devise`.
 2. Let's begin with the Comment model: 
 
 ```
-# app/models/comment.rb
+#app/models/comment.rb
 
 class Comment < ApplicationRecord
   belongs_to :author, class_name: "User", counter_cache: true
@@ -907,7 +917,7 @@ For the FollowRequest model, we already added a default "pending" value to statu
 On to Photo. Aside from foreign keys and columns with default values, only the caption and image columns need validations:
 
 ```
-# app/models/photo.rb
+#app/models/photo.rb
 
 class Photo < ApplicationRecord
   # ...
@@ -920,22 +930,22 @@ end
 Finally, we have User. Let’s look at the annotations:
 
 ```
-# app/models/user.rb
+#app/models/user.rb
 
-# Table name: users
-#
-#  id                     :bigint           not null, primary key
-#  comments_count         :integer          default(0)
-#  email                  :citext           default(""), not null
-#  encrypted_password     :string           default(""), not null
-#  likes_count            :integer          default(0)
-#  private                :boolean          
-#  remember_created_at    :datetime
-#  reset_password_sent_at :datetime
-#  reset_password_token   :string
-#  username               :citext
-#  created_at             :datetime         not null
-#  updated_at             :datetime         not null
+#Table name: users
+
+#id                     :bigint           not null, primary key
+#comments_count         :integer          default(0)
+#email                  :citext           default(""), not null
+#encrypted_password     :string           default(""), not null
+#likes_count            :integer          default(0)
+#private                :boolean          
+#remember_created_at    :datetime
+#reset_password_sent_at :datetime
+#reset_password_token   :string
+#username               :citext
+#created_at             :datetime         not null
+#updated_at             :datetime         not null
 ```
 
 All of the password and email things are being taken care of by Devise, so we don’t need to worry about them. And we’ve set defaults on the _count columns.
@@ -943,10 +953,10 @@ All of the password and email things are being taken care of by Devise, so we do
 We should add one validation for the presence and uniqueness of a username:
 
 ```
-# app/models/user.rb
+#app/models/user.rb
 
 class User < ApplicationRecord
-  # ...
+  #...
   has_many :discover, through: :leaders, source: :liked_photos
 
   validates :username, presence: true, uniqueness: true
@@ -966,7 +976,7 @@ rails g migration AddDefaultToPrivate
 3. This won’t write everything for me, which can only be done for adding columns. So we’ll need to modify the migration file with the code shown here:
 
 ```
-# db/migrate/<date-time-of-migration>_add_default_to_private.rb
+#db/migrate/<date-time-of-migration>_add_default_to_private.rb
 
 class AddDefaultToPrivate < ActiveRecord::Migration[7.0]
   def change
@@ -1004,10 +1014,10 @@ current_user.discover.order(likes_count: :desc)
 
 We encapsulate with:
 ```
-# app/models/photo.rb
+#app/models/photo.rb
 
 class Photo < ApplicationRecord
-  # ...
+  #...
   scope :past_week, -> { where(created_at: 1.week.ago...) }
   scope :by_likes, -> { order(likes_count: :desc) }
 end
@@ -1023,7 +1033,7 @@ end
 (49 min)
 
 ```
-# app/models/follow_request.rb
+#app/models/follow_request.rb
 
 class FollowRequest < ApplicationRecord
   belongs_to :recipient, class_name: "User"
@@ -1032,8 +1042,8 @@ class FollowRequest < ApplicationRecord
   enum status: { pending: "pending", rejected: "rejected", accepted: "accepted" } 
 
   #the above automatically defines:
-  # scope :accepted, -> {where(status: "accepted")}
-  # scope :accepted, -> {where(status: "accepted")}
+  #scope :accepted, -> {where(status: "accepted")}
+  #scope :accepted, -> {where(status: "accepted")}
 
 end
 ```
@@ -1041,7 +1051,7 @@ end
 Now, we automatically get a bunch of handy methods for each status, or each of the keys in our hash. We get ? and ! instance methods:
 
 ```
-# assume follow_request is a valid and pending
+#assume follow_request is a valid and pending
 follow_request.accepted? # => false
 follow_request.accepted! # sets status to "accepted" and saves
 ```
@@ -1058,16 +1068,16 @@ we can now replace a Proc in the association accessors for our User model with t
 (50 min)
 
 ```
-# app/models/user.rb
+#app/models/user.rb
 
 class User < ApplicationRecord
-  # ...
+  #...
   has_many :sent_follow_requests, foreign_key: :sender_id, class_name: "FollowRequest"
   has_many :accepted_sent_follow_requests, -> { accepted }, foreign_key: :sender_id, class_name: "FollowRequest"
   
   has_many :received_follow_requests, foreign_key: :recipient_id, class_name: "FollowRequest"
   has_many :accepted_received_follow_requests, -> { accepted }, foreign_key: :recipient_id, class_name: "FollowRequest"
-# ...
+#...
 ```
 
 And now, because enum defines the method FollowRequest.accepted to return a list of accepted follow requests, we can use that method here!
@@ -1086,7 +1096,7 @@ Write sample data tasks
 1. Copy and paste the following:
 
 ```
-# lib/tasks/dev.rake
+#lib/tasks/dev.rake
 
 task sample_data: :environment do
   p "Creating sample data"
@@ -1106,7 +1116,7 @@ photogram-industrial rg-photogram-industrial-2 % rake sample_data
 3. Let's create sample data using faker gem: https://github.com/faker-ruby/faker.
 
 ```
-# lib/tasks/dev.rake
+#lib/tasks/dev.rake
 
 task sample_data: :environment do
   p "Creating sample data"
@@ -1125,7 +1135,7 @@ end
 A more complicated example:
 
 ```
-# lib/tasks/dev.rake
+#lib/tasks/dev.rake
 
 task :sample_data do
   p "Creating sample data"
@@ -1169,7 +1179,7 @@ add the prefix unique. create
 (1 h) The solution
 
 ```
-# lib/tasks/dev.rake
+#lib/tasks/dev.rake
 
 desc "Fill the database tables with some sample data"
 task({ :sample_data => :environment }) do
@@ -1227,7 +1237,7 @@ end
 1h 10 min: solution continued
 
 ```
-# lib/tasks/dev.rake
+#lib/tasks/dev.rake
 
 desc "Fill the database tables with some sample data"
 task({ :sample_data => :environment }) do
@@ -1366,7 +1376,7 @@ Also, go to models
 - I may be missing the command default: 0
 
 ```
-# db/migrate/<date-time-of-migration>_create_follow_requests.rb
+#db/migrate/<date-time-of-migration>_create_follow_requests.rb
 
 class AddPhotosCountToUsers < ActiveRecord::Migration[7.0]
   def change
@@ -1400,9 +1410,21 @@ Comment:
 - Add validates within like.rb to allow fans to like a picture only once.
 
   ```
-  # app/models/like.rb
+  #app/models/like.rb
 
   validates :user_id, uniqueness: { scope: :photo_id, message: "has already liked this photo" }
   ```
+
+### <a id="3">Part 3</a>
+
+Video: https://share.descript.com/view/KkN3XUdeop3
+
+Lesson: https://learn.firstdraft.com/lessons/199-photogram-industrial-part-3
+
+target: https://share.descript.com/view/KkN3XUdeop3
+
+Notes:
+
+1. create a new branch: git checkout -b rb-starting-on-ui 
 
 ***
