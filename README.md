@@ -223,7 +223,7 @@ git log --oneline --decorate --graph --all -s30
 10. (20 min) call the scaffolds commanmd.
 
 ```
-rails generate scaffold photo image commments_count:integer likes_count:integer caption:text owner:references
+rails generate scaffold photo image comments_count:integer likes_count:integer caption:text owner:references
 ```
 
 Visit the generated file: db/migrate ..._create_photos. This is what you see:
@@ -233,7 +233,7 @@ class CreatePhotos < ActiveRecord::Migration[7.0]
   def change
     create_table :photos do |t|
       t.string :image
-      t.integer :commments_count
+      t.integer :comments_count
       t.integer :likes_count
       t.text :caption
       t.references :owner, null: false, foreign_key: true
@@ -251,7 +251,7 @@ class CreatePhotos < ActiveRecord::Migration[7.0]
   def change
     create_table :photos do |t|
       t.string :image
-      t.integer :commments_count, default: 0
+      t.integer :comments_count, default: 0
       t.integer :likes_count, default: 0
       t.text :caption
       t.references :owner, null: false, foreign_key: { to_table :users }
@@ -301,7 +301,7 @@ class CreatePhotos < ActiveRecord::Migration[7.0]
   def change
     create_table :photos do |t|
       t.string :image
-      t.integer :commments_count, default: 0
+      t.integer :comments_count, default: 0
       t.integer :likes_count, default: 0
       t.text :caption
       t.references :owner, null: false, foreign_key: { to_table: :users }
@@ -1376,5 +1376,16 @@ end
 ```
 
 Need to know how top update the migrate file. Typing rails db:migrate after modifying the file didn't help.
+- type rails db:drop 
+- rails db:create
+- rails db:migrate
+
+The issue was that the comments_count field was incorrectly names with three ms: commments_count.
+
+The issue was caught by highlighting the keyword that was an issue in schema.db. Identical names should be highlighted.
+
+Bottom line: 
+- Look athe schema.db to see the overall table.
+- Highlight suspicious fields to troubleshoot issues. Fiedls that are identical should be highlighted. If not highlighted, they are not identical.
 
 ***

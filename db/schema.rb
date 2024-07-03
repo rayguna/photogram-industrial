@@ -45,8 +45,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_07_03_031838) do
 
   create_table "photos", force: :cascade do |t|
     t.string "image"
-    t.integer "commments_count"
-    t.integer "likes_count"
+    t.integer "comments_count", default: 0
+    t.integer "likes_count", default: 0
     t.text "caption"
     t.bigint "owner_id"
     t.datetime "created_at", null: false
@@ -66,7 +66,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_07_03_031838) do
     t.integer "comments_count", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "photos_count"
+    t.integer "photos_count", default: 0
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true

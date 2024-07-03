@@ -2,14 +2,14 @@
 #
 # Table name: photos
 #
-#  id              :bigint           not null, primary key
-#  caption         :text
-#  commments_count :integer
-#  image           :string
-#  likes_count     :integer
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  owner_id        :bigint
+#  id             :bigint           not null, primary key
+#  caption        :text
+#  comments_count :integer          default(0)
+#  image          :string
+#  likes_count    :integer          default(0)
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  owner_id       :bigint
 #
 # Indexes
 #
@@ -24,7 +24,7 @@ class Photo < ApplicationRecord
   has_many :comments
 
   has_many :likes
-  has_many :fans, through: :likes
+  has_many :fans, through: :likes, source: :fan
 
   validates :caption, presence: true
   validates :image, presence: true
