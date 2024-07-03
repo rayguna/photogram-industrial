@@ -840,16 +840,19 @@ At some point, we will check the associations.
   - Continuing with the User associations accessors (there are quite a few!), we would like to build a :feed of photos for each user, which contains the photos posted by their :leaders. Finally, we want to build a :discover page, which contains the photos liked by their :leaders:
 
     ```
-    # app/models/user.rb
-
     class User < ApplicationRecord
-      # ...
-      has_many :sent_follow_requests, foreign_key: :sender_id, class_name: "FollowRequest"
+      # Include default devise modules. Others available are:
+      # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+      devise :database_authenticatable, :registerable,
+            :recoverable, :rememberable, :validatable
 
+      has_many :own_photos, class_name: "Photo", foreign_key: "owner_id" 
+      has_many :comments, foreign_key: "author_id"
+
+      has_many :sent_follow_requests, foreign_key: :sender_id, class_name: "FollowRequest"
       has_many :accepted_sent_follow_requests, -> { where(status: "accepted") }, foreign_key: :sender_id, class_name: "FollowRequest"
       
       has_many :received_follow_requests, foreign_key: :recipient_id, class_name: "FollowRequest"
-
       has_many :accepted_received_follow_requests, -> { where(status: "accepted") }, foreign_key: :recipient_id, class_name: "FollowRequest"
 
       has_many :likes, foreign_key: :fan_id
@@ -858,8 +861,6 @@ At some point, we will check the associations.
 
       has_many :liked_photos, through: :likes, source: :photo
 
-      has_many :leaders, through: :sent_follow_requests, source: :recipient
-
       has_many :leaders, through: :accepted_sent_follow_requests, source: :recipient
 
       has_many :followers, through: :accepted_received_follow_requests, source: :sender
@@ -867,7 +868,7 @@ At some point, we will check the associations.
       has_many :feed, through: :leaders, source: :own_photos
 
       has_many :discover, through: :leaders, source: :liked_photos
-      
+
     end
     ```
 - You could have used the association accessor wizard: https://association-accessors.firstdraft.com/users/sign_in
@@ -879,3 +880,93 @@ Definitely time to git commit and push!
 Commit changes with `git add -A`.
 
 Then: `git commit -m "generated users with devise`.
+
+### K. Validations
+
+1. We can go through each column in the table (thanks to our handy annotate gem) and decide if, and what the validation should be.
+
+2. Let's begin with the Comment model: 
+
+```
+# app/models/comment.rb
+
+class Comment < ApplicationRecord
+  belongs_to :author, class_name: "User", counter_cache: true
+  belongs_to :photo, counter_cache: true
+
+  validates :body, presence: true
+end
+```
+
+The only thing we need here is the presence: true for the body column.
+
+As we discussed, having a belongs_to association will validate the author_id and photo_id columns by default – a feature we switched off previously.
+
+For the FollowRequest model, we already added a default "pending" value to status, and all the foreign keys will again be automatically validated. Similarly, Like only has foreign keys, so that will be automatically validated.
+
+On to Photo. Aside from foreign keys and columns with default values, only the caption and image columns need validations:
+
+```
+# app/models/photo.rb
+
+class Photo < ApplicationRecord
+  # ...
+  has_many :fans, through: :likes
+
+  validates :caption, presence: true
+  validates :image, presence: true
+end
+```
+Finally, we have User. Let’s look at the annotations:
+
+```
+# app/models/user.rb
+
+# Table name: users
+#
+#  id                     :bigint           not null, primary key
+#  comments_count         :integer          default(0)
+#  email                  :citext           default(""), not null
+#  encrypted_password     :string           default(""), not null
+#  likes_count            :integer          default(0)
+#  private                :boolean          
+#  remember_created_at    :datetime
+#  reset_password_sent_at :datetime
+#  reset_password_token   :string
+#  username               :citext
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+```
+
+All of the password and email things are being taken care of by Devise, so we don’t need to worry about them. And we’ve set defaults on the _count columns.
+
+We should add one validation for the presence and uniqueness of a username:
+
+```
+# app/models/user.rb
+
+class User < ApplicationRecord
+  # ...
+  has_many :discover, through: :leaders, source: :liked_photos
+
+  validates :username, presence: true, uniqueness: true
+end
+```
+
+### L. Adding a default value to user’s privacy
+
+1. Read here: https://blog.arkency.com/how-to-add-a-default-value-to-an-existing-column-in-a-rails-migration/
+
+2. Let’s modify our database with another migration to add a default on private in users:
+
+```
+rails g migration AddDefaultToPrivate
+```
+
+3. 
+
+### M. Scopes
+
+### N. Enum column type
+
+### O. Sample data task
