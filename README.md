@@ -1388,4 +1388,21 @@ Bottom line:
 - Look athe schema.db to see the overall table.
 - Highlight suspicious fields to troubleshoot issues. Fiedls that are identical should be highlighted. If not highlighted, they are not identical.
 
+### Pull request
+
+- compare and pull request.
+- set the main as your repo. Set the other as your current, most updated branch.
+- add reviewer for this particular project by goinhg to settings > collaborators.
+- Once the reviewers are added, you can add them to your pull request.
+
+Comment:
+
+- Add validates within like.rb to allow fans to like a picture only once.
+
+  ```
+  # app/models/like.rb
+
+  validates :user_id, uniqueness: { scope: :photo_id, message: "has already liked this photo" }
+  ```
+
 ***
