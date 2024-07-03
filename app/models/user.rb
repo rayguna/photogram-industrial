@@ -37,4 +37,6 @@ class User < ApplicationRecord
   has_many :likes, foreign_key: :fan_id
   
   has_many :own_photos, foreign_key: :owner_id, class_name: "Photo"
+
+  has_many :liked_photos, through: :likes, source: :photo
 end

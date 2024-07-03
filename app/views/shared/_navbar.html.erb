@@ -63,7 +63,7 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" href="/users/edit">Edit profile</a>
-              <%= link_to "Sign out", destroy_user_session_path, class: "nav-link", data: { turbo_method: :delete } %> 
+              <%= link_to "Sign out", destroy_user_session_path, method: :delete, class: "dropdown-item", data: { turbo_method: :delete } %>
             </div>
           </li>
 

@@ -817,3 +817,65 @@ At some point, we will check the associations.
 
 
 ### J. Indirect Associations
+
+1. Watch the video (start at 23.30 min): https://share.descript.com/view/wy5mgzsL2WX on the association accessor app on adding the five models.
+
+2. We will do N-to-N association.
+
+3. Our first N-N is fans to photos through users. 
+  - We need to go the Photo model, and add a has_many association for the fans of each photo that goes through the likes on the photo to the User model:
+
+    ```
+    # app/models/photo.rb
+
+    class Photo < ApplicationRecord
+      # ...
+      has_many :likes
+      has_many :fans, through: :likes
+    end
+    ```
+
+  -  let’s add this inverse indirect association to User and add scopes association.
+
+  - Continuing with the User associations accessors (there are quite a few!), we would like to build a :feed of photos for each user, which contains the photos posted by their :leaders. Finally, we want to build a :discover page, which contains the photos liked by their :leaders:
+
+    ```
+    # app/models/user.rb
+
+    class User < ApplicationRecord
+      # ...
+      has_many :sent_follow_requests, foreign_key: :sender_id, class_name: "FollowRequest"
+
+      has_many :accepted_sent_follow_requests, -> { where(status: "accepted") }, foreign_key: :sender_id, class_name: "FollowRequest"
+      
+      has_many :received_follow_requests, foreign_key: :recipient_id, class_name: "FollowRequest"
+
+      has_many :accepted_received_follow_requests, -> { where(status: "accepted") }, foreign_key: :recipient_id, class_name: "FollowRequest"
+
+      has_many :likes, foreign_key: :fan_id
+
+      has_many :own_photos, foreign_key: :owner_id, class_name: "Photo"
+
+      has_many :liked_photos, through: :likes, source: :photo
+
+      has_many :leaders, through: :sent_follow_requests, source: :recipient
+
+      has_many :leaders, through: :accepted_sent_follow_requests, source: :recipient
+
+      has_many :followers, through: :accepted_received_follow_requests, source: :sender
+
+      has_many :feed, through: :leaders, source: :own_photos
+
+      has_many :discover, through: :leaders, source: :liked_photos
+      
+    end
+    ```
+- You could have used the association accessor wizard: https://association-accessors.firstdraft.com/users/sign_in
+
+- To write some, or all of these by hand would be really difficult in correct and performant SQL. Rails does it all for us.
+
+Definitely time to git commit and push!
+
+Commit changes with `git add -A`.
+
+Then: `git commit -m "generated users with devise`.
