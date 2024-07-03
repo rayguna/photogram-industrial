@@ -1310,4 +1310,59 @@ end
 ```
 7. Run the command `rake sample_data`.
 
+
+TIPS (1h 8 min) -     
+
+The destroy all must be kept in the if-else block.
+
+ForeignKey violation error occurs because you must destroy the parents object first and then the child object!
+
+Foreign key object is there to prevent deleting the parent object and orphan child object. You must first destroy the pchildren objects, and only then you can destroy the parent objects. In this case, destroy everything else and destroy the User parent table last.
+
+
+```
+#destroy existing data
+if Rails.env.development?
+  FollowRequest.destroy_all
+  User.destroy_all
+```
+
+
+Error:
+```
+rake aborted!
+ActiveModel::MissingAttributeError: can't write unknown attribute `comments_count`
+/home/student/.rvm/ruby-3.2.1/gems/activemodel-7.0.8/lib/active_model/attribute.rb:211:in `with_value_from_database'
+```
+
+Look at db/schema.rb:
+
+- The error message ActiveModel::MissingAttributeError: can't write unknown attribute 'comments_count' suggests that ActiveRecord is trying to increment or update a comments_count attribute on a model instance but cannot find it.
+- This error commonly occurs when you have specified counter_cache: true in your association definition (belongs_to, has_many, has_one). This feature relies on a database column (comments_count in this case) to store and manage counts of associated records (comments in this case). If this column is missing from your database schema or if the attribute is not properly defined in your model, ActiveRecord will raise this error.
+- Database Migration: Ensure you have a migration that adds the comments_count column to the table corresponding to the associated model. For example, if you have comments associated with posts, you would need a migration like:
+
+```
+class AddCommentsCountToPosts < ActiveRecord::Migration[7.0]
+  def change
+    add_column :posts, :comments_count, :integer, default: 0
+  end
+end
+```
+
+The issue may have to do with:
+db/migrate/..add_photos_count..
+```
+class AddPhotosCountToUsers < ActiveRecord::Migration[7.0]
+  def change
+    add_column :users, :photos_count, :integer, default: 0
+  end
+end
+```
+
+Note to add , default: 0.
+
+Also, go to models
+
+
+
 ***

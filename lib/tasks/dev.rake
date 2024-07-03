@@ -58,12 +58,12 @@ task({ :sample_data => :environment }) do
           caption: Faker::Quote.jack_handey,
           image: "https://robohash.org/#{rand(9999)}"
         )
-  
+
         user.followers.each do |follower|
           if rand < 0.5 && !photo.fans.include?(follower)
             photo.fans << follower
           end
-  
+          
           if rand < 0.25
             photo.comments.create(
               body: Faker::Quote.jack_handey,
@@ -73,6 +73,7 @@ task({ :sample_data => :environment }) do
         end
       end
     end
+    
     
     ending = Time.now
     p "It took #{(ending - starting).to_i} seconds to create sample data."
