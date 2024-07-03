@@ -990,6 +990,33 @@ You will see private to true
 
 ### M. Scopes
 
+1. Notes: https://guides.rubyonrails.org/active_record_querying.html#scopes
+
+2. We can encapsulate these in scopes within our models:
+
+To do:
+
+```
+current_user.discover.where(created_at: 1.week.ago...)
+
+current_user.discover.order(likes_count: :desc)
+```
+
+We encapsulate with:
+```
+# app/models/photo.rb
+
+class Photo < ApplicationRecord
+  # ...
+  scope :past_week, -> { where(created_at: 1.week.ago...) }
+  scope :by_likes, -> { order(likes_count: :desc) }
+end
+```
+
+(45 min)
+
+
+
 ### N. Enum column type
 
 ### O. Sample data task
