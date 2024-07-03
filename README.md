@@ -1072,4 +1072,242 @@ class User < ApplicationRecord
 
 And now, because enum defines the method FollowRequest.accepted to return a list of accepted follow requests, we can use that method here!
 
+Checkpoint: Visit:
+  - /photos
+  - /comments
+
+(52 min)
+
 ### O. Sample data task
+
+(53 min)
+Write sample data tasks
+
+1. Copy and paste the following:
+
+```
+# lib/tasks/dev.rake
+
+task sample_data: :environment do
+  p "Creating sample data"
+end
+```
+
+The :environment argument to task makes sure that sample_data has access to all of the gems and models in our app.
+
+2. Test it out by typing in the terminal `rake sample_data`. 
+
+```
+photogram-industrial rg-photogram-industrial-2 % rake sample_data
+"Creating sample data"
+```
+
+(55 min)
+3. Let's create sample data using faker gem: https://github.com/faker-ruby/faker.
+
+```
+# lib/tasks/dev.rake
+
+task sample_data: :environment do
+  p "Creating sample data"
+
+  12.times do
+    p Faker: :Name.unique.first_name
+    u = User.new
+  end
+
+  p "#{User.count} users have been created."
+end
+```
+
+(57 min)
+
+A more complicated example:
+
+```
+# lib/tasks/dev.rake
+
+task :sample_data do
+  p "Creating sample data"
+
+  #destroy existing data
+  if Rails.env.development?
+    FollowRequest.destroy_all
+    Comment.destroy_all
+    Like.destroy_all
+    Photo.destroy_all
+    User.destroy_all
+  end
+
+  12.times do
+    name = Faker::Name.first_name
+    User.create(
+      email: "#{name}@example.com",
+      password: "password",
+      username: name,
+      private: [true, false].sample,
+    )
+
+    p u.errors.full_messages
+
+  end
+
+  p "There are now #{User.count} users."
+end
+```
+
+add the prefix unique. create 
+
+4. Type in the terminal `rails sample_data`.
+
+5. Check: https://scaling-adventure-6r9qwqx4pjv3x6rq-3000.app.github.dev/rails/db/tables/users/data
+
+6. Make users to follow each other:
+
+(58 min)
+
+(1 h) The solution
+
+```
+# lib/tasks/dev.rake
+
+desc "Fill the database tables with some sample data"
+task({ :sample_data => :environment }) do
+  p "Creating sample data"
+  
+    #destroy existing data
+    if Rails.env.development?
+      FollowRequest.destroy_all
+      Comment.destroy_all
+      Like.destroy_all
+      Photo.destroy_all
+      User.destroy_all
+    end
+  
+    12.times do
+      name = Faker::Name.first_name
+      User.create(
+        email: "#{name}@example.com",
+        password: "password",
+        username: name,
+        private: [true, false].sample,
+      )
+    end
+  
+    p "There are now #{User.count} users."
+
+    #make users follow each other
+    users = User.all
+
+    users.each do |first_user|
+      users.each do |second_user|
+        next if first_user == second_user
+        if rand < 0.75
+          first_user.sent_follow_requests.create(
+            recipient: second_user,
+            status: FollowRequest.statuses.keys.sample
+          )
+        end
+  
+        if rand < 0.75
+          second_user.sent_follow_requests.create(
+            recipient: first_user,
+            status: FollowRequest.statuses.keys.sample
+          )
+        end
+      end
+    end
+    p "There are now #{FollowRequest.count} follow requests."
+
+end
+```
+
+1h 5 min - test.
+
+1h 10 min: solution continued
+
+```
+# lib/tasks/dev.rake
+
+desc "Fill the database tables with some sample data"
+task({ :sample_data => :environment }) do
+  p "Creating sample data"
+  
+    #destroy existing data
+    if Rails.env.development?
+      FollowRequest.destroy_all
+      Comment.destroy_all
+      Like.destroy_all
+      Photo.destroy_all
+      User.destroy_all
+    end
+  
+    12.times do
+      name = Faker::Name.first_name
+      User.create(
+        email: "#{name}@example.com",
+        password: "password",
+        username: name,
+        private: [true, false].sample,
+      )
+
+      # p u.errors.full_messages #catch errors
+    end
+  
+    p "There are now #{User.count} users."
+
+    #make users follow each other
+    users = User.all
+
+    users.each do |first_user|
+      users.each do |second_user|
+        next if first_user == second_user #a user can't folow themselves
+        if rand < 0.75
+          first_user.sent_follow_requests.create(
+            recipient: second_user,
+            status: FollowRequest.statuses.keys.sample
+          )
+        end
+  
+        if rand < 0.75
+          second_user.sent_follow_requests.create(
+            recipient: first_user,
+            status: FollowRequest.statuses.keys.sample
+          )
+        end
+      end
+    end
+    p "There are now #{FollowRequest.count} follow requests."
+
+    # generate Photos, Likes, and Comments.
+    users.each do |user|
+      rand(15).times do
+        photo = user.own_photos.create(
+          caption: Faker::Quote.jack_handey,
+          image: "https://robohash.org/#{rand(9999)}"
+        )
+  
+        user.followers.each do |follower|
+          if rand < 0.5 && !photo.fans.include?(follower)
+            photo.fans << follower
+          end
+  
+          if rand < 0.25
+            photo.comments.create(
+              body: Faker::Quote.jack_handey,
+              author: follower
+            )
+          end
+        end
+      end
+    end
+    p "There are now #{User.count} users."
+    p "There are now #{FollowRequest.count} follow requests."
+    p "There are now #{Photo.count} photos."
+    p "There are now #{Like.count} likes."
+    p "There are now #{Comment.count} comments."
+end
+```
+7. Run the command `rake sample_data`.
+
+***
