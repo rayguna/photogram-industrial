@@ -1,6 +1,9 @@
 desc "Fill the database tables with some sample data"
+
 task({ :sample_data => :environment }) do
   p "Creating sample data"
+
+  starting = Time.now
   
     #destroy existing data
     if Rails.env.development?
@@ -48,7 +51,7 @@ task({ :sample_data => :environment }) do
     end
     p "There are now #{FollowRequest.count} follow requests."
 
-    # generate Photos, Likes, and Comments.
+    #generate Photos, Likes, and Comments.  
     users.each do |user|
       rand(15).times do
         photo = user.own_photos.create(
@@ -70,10 +73,15 @@ task({ :sample_data => :environment }) do
         end
       end
     end
-    #p "There are now #{User.count} users."
-    #p "There are now #{FollowRequest.count} follow requests."
+    
+    ending = Time.now
+    p "It took #{(ending - starting).to_i} seconds to create sample data."
 
-    #p "There are now #{Photo.count} photos."
-    #p "There are now #{Like.count} likes."
-    #p "There are now #{Comment.count} comments."
+    p "There are now #{User.count} users."
+    p "There are now #{FollowRequest.count} follow requests."
+
+    p "There are now #{Photo.count} photos."
+    p "There are now #{Like.count} likes."
+    p "There are now #{Comment.count} comments."
+
 end
