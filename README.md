@@ -1363,6 +1363,18 @@ Note to add , default: 0.
 
 Also, go to models
 
+- I may be missing the command default: 0
 
+```
+# db/migrate/<date-time-of-migration>_create_follow_requests.rb
+
+class AddPhotosCountToUsers < ActiveRecord::Migration[7.0]
+  def change
+    add_column :users, :photos_count, :integer, default: 0
+  end
+end
+```
+
+Need to know how top update the migrate file. Typing rails db:migrate after modifying the file didn't help.
 
 ***
