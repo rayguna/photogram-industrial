@@ -963,7 +963,30 @@ end
 rails g migration AddDefaultToPrivate
 ```
 
-3. 
+3. This won’t write everything for me, which can only be done for adding columns. So we’ll need to modify the migration file with the code shown here:
+
+```
+# db/migrate/<date-time-of-migration>_add_default_to_private.rb
+
+class AddDefaultToPrivate < ActiveRecord::Migration[7.0]
+  def change
+    change_column_default(
+      :users,
+      :private,
+      true
+    )
+  end
+end
+```
+
+Type: 
+```
+rake db:migrate
+```
+
+review: app/models/user.rb
+
+You will see private to true
 
 ### M. Scopes
 
