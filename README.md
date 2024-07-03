@@ -1015,8 +1015,61 @@ end
 
 (45 min)
 
-
-
 ### N. Enum column type
+
+1. A column that can have a list of values, in this case, the FOllowRequest table has a column called status whose valies is one of "pending", "rejected", or "accepted", it is a good candidate to be an ActiveRecord::Enum, which will give us a bunch of handy methods for free.
+
+2. Modify the following:
+(49 min)
+
+```
+# app/models/follow_request.rb
+
+class FollowRequest < ApplicationRecord
+  belongs_to :recipient, class_name: "User"
+  belongs_to :sender, class_name: "User"
+
+  enum status: { pending: "pending", rejected: "rejected", accepted: "accepted" } 
+
+  #the above automatically defines:
+  # scope :accepted, -> {where(status: "accepted")}
+  # scope :accepted, -> {where(status: "accepted")}
+
+end
+```
+
+Now, we automatically get a bunch of handy methods for each status, or each of the keys in our hash. We get ? and ! instance methods:
+
+```
+# assume follow_request is a valid and pending
+follow_request.accepted? # => false
+follow_request.accepted! # sets status to "accepted" and saves
+```
+
+We also get automatic positive and negative scopes:
+
+```
+FollowRequest.accepted
+current_user.received_follow_requests.not_rejected
+```
+
+we can now replace a Proc in the association accessors for our User model with these handy functions we’ve defined on Photo:
+
+(50 min)
+
+```
+# app/models/user.rb
+
+class User < ApplicationRecord
+  # ...
+  has_many :sent_follow_requests, foreign_key: :sender_id, class_name: "FollowRequest"
+  has_many :accepted_sent_follow_requests, -> { accepted }, foreign_key: :sender_id, class_name: "FollowRequest"
+  
+  has_many :received_follow_requests, foreign_key: :recipient_id, class_name: "FollowRequest"
+  has_many :accepted_received_follow_requests, -> { accepted }, foreign_key: :recipient_id, class_name: "FollowRequest"
+# ...
+```
+
+And now, because enum defines the method FollowRequest.accepted to return a list of accepted follow requests, we can use that method here!
 
 ### O. Sample data task
