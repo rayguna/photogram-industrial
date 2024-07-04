@@ -1424,6 +1424,422 @@ target: https://share.descript.com/view/KkN3XUdeop3
 
 Notes:
 
-1. create a new branch: git checkout -b rb-starting-on-ui 
 
+### A. Create a new branch
+
+1. create a new branch: `git checkout -b rb-starting-on-ui`. 
+2. created the wrong name. Type `git checkout rg-photogram-industrial-2`.
+3. delete the previous branch, `git branch -D rb-starting-on-ui`.
+4. create a new branch with the correct name, `git checkout -b rg-starting-on-ui`.  
+
+### B. Create routes
+
+1. Create a root route:
+
+```
+#config/routes.rb
+
+Rails.application.routes.draw do
+  root "photos#index"
+  
+  devise_for :users
+  
+  resources :comments
+  resources :follow_requests
+  resources :likes
+  resources :photos
+end
+```
+
+Note that the routes have been reordered.
+
+2. Run the web app by typing in the terminal `bin/dev`.
+
+### C. Implementing bootstrap
+
+1. Delete the default: app/assets/stylesheets/scaffolds.scss (and individual, but empty files for each resource, like photos.scss). - these don't exist in the newer version of the project.
+
+2. Add navbar. Use the kitchen sink example:
+
+```
+<!-- app/views/layouts/application.html.erb -->
+
+<!-- ... -->
+  <body>
+
+    <%= render partial: "shared/navbar" %>
+
+    <%= yield %>
+  </body>
+</html>
+```
+
+3. Also add CDN:
+
+```
+<!-- app/views/layouts/application.html.erb -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Photogram Industrial</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    
+    <%= render partial: "shared/cdn_assets" %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+
+  </head>
+<!-- ... -->
+```
+
+4. put the yield statement in a container to give our page.
+
+```
+<!-- app/views/layouts/application.html.erb -->
+
+<!-- ... -->
+  <body>
+
+    <%= render partial: "shared/navbar" %>
+
+    <div class="container">
+      <%= yield %>
+    </div>
+
+  </body>
+</html>
+```
+
+5. Make a git commit.
+
+### D. Starting navbar styling
+1. Change the homepage link at the top of the navbar:
+
+```
+<!-- app/views/shared/_navbar.html.erb -->
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <!-- <a class="navbar-brand" href="#">Navbar</a> -->
+  <%= link_to "Photogram", root_path, class: "navbar-brand" %>
+  
+  <!-- ... -->
+</nav>
+```
+
+2. Modify the “Dropdown” menu contain all of the resources (their index pages will be fine), and for the sign in links to be on the right side of the navbar where the “Search” currently is. Look for:
+```
+<li class="nav-item dropdown">
+...
+</li>
+```
+
+Here is the code
+
+```
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <!-- ... -->
+    
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Resources
+          </a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="/photos">Photos</a>
+            <a class="dropdown-item" href="/comments">Comments</a>
+            <a class="dropdown-item" href="/follow_requests">Follow Requests</a>
+            <a class="dropdown-item" href="/likes">Likes</a>
+          </div>
+        </li>
+      </ul>
+      <!-- ... -->
+```
+
+3. Add padding:
+
+```
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <%= link_to "Photogram", root_path, class: "navbar-brand" %>
+      <!-- ... -->
+  </div>
+</nav>
+```
+
+### E. User account links
+
+1. Add the following routes:
+
+```
+- Edit profile: edit_user_registration_path
+
+- Sign out: destroy_user_session_path
+
+- Sign in: new_user_session_path
+
+- Sign up: new_user_registration_path
+```
+
+2. Add the following to the navbar:
+
+```
+<!-- app/views/shared/_navbar.html.erb -->
+
+<!-- ... -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <%= link_to "Edit profile", edit_user_registration_path, class: "nav-link" %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Sign out", destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link" %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Sign in", new_user_session_path, class: "nav-link" %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Sign up", new_user_registration_path, class: "nav-link" %>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+```
+
+For the “Sign out” link, we also needed to add the option data: { turbo_method: :delete }, because this is a DELETE HTTP request.
+
+3. Add if-else statement to the navbar for signed-in and signed out users.
+
+```
+<!-- app/views/shared/_navbar.html.erb -->
+
+<!-- ... -->
+      <ul class="navbar-nav">
+        <% if user_signed_in? %>
+          <li class="nav-item">
+            <%= link_to "Edit #{current_user.username}", edit_user_registration_path, class: "nav-link" %>
+          </li>
+          <li class="nav-item">
+            <%= link_to "Sign out", destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link" %>
+          </li>
+
+        <% else %>
+          <li class="nav-item">
+            <%= link_to "Sign in", new_user_session_path, class: "nav-link" %>
+          </li>
+          <li class="nav-item">
+            <%= link_to "Sign up", new_user_registration_path, class: "nav-link" %>
+          </li>
+
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</nav>
+```
+
+Here is the final contents of navbar:
+
+```
+<nav class="navbar navbar-expand-lg bg-light">
+  <div class="container-fluid">
+    <!--<a class="navbar-brand" href="#">Navbar</a>-->
+    <%= link_to "Photogram", root_path, class: "navbar-brand" %>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Resources
+          </a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="/photos">Photos</a>
+            <a class="dropdown-item" href="/comments">Comments</a>
+            <a class="dropdown-item" href="/follow_requests">Follow Requests</a>
+            <a class="dropdown-item" href="/likes">Likes</a>
+          </div>
+        </li>
+      </ul>
+      
+      <ul class="navbar-nav">
+         <% if user_signed_in? %>
+          <li class="nav-item">
+            <%= link_to "Edit #{current_user.username}", edit_user_registration_path, class: "nav-link" %>
+          </li>
+          <li class="nav-item">
+            <%= link_to "Sign out", destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link" %>
+          </li>
+
+        <% else %>
+          <li class="nav-item">
+            <%= link_to "Sign in", new_user_session_path, class: "nav-link" %>
+          </li>
+          <li class="nav-item">
+            <%= link_to "Sign up", new_user_registration_path, class: "nav-link" %>
+          </li>
+
+        <% end %>
+      </ul>
+
+  </div>
+ </div> 
+</nav>
+```
+
+### F. Flaw in sample_data
+
+1. Added users with known credentials inthe rake sample_data file:
+
+```
+# lib/tasks/dev.rake
+
+desc "Fill the database tables with some sample data"
+task sample_data: :environment do
+  p "Creating sample data"
+  starting = Time.now
+
+  if Rails.env.development?
+    FollowRequest.delete_all
+    Comment.delete_all
+    Like.delete_all
+    Photo.delete_all
+    User.delete_all
+  end
+
+  usernames = Array.new { Faker::Name.first_name }
+
+  usernames << "alice"
+  usernames << "bob"
+
+  usernames.each do |username|
+    User.create(
+      email: "#{username}@example.com",
+      password: "password",
+      username: username.downcase,
+      private: [true, false].sample,
+    )
+  end
+
+  12.times do
+    name = Faker::Name.first_name
+# ...
+```
+
+2. Now re-run rake sample_data, return to the live app, and try to sign in with the user: alice@example.com and password: password.
+
+### G. Force sign in
+
+1. We don’t want to put user_signed_in? combined with conditionals all over the app. Rather, let’s add a force sign in to the ApplicationController:
+
+```
+# app/controllers/application_controller.rb
+
+class ApplicationController < ActionController::Base
+  before_action :authenticate_user!
+end
+```
+
+We use the method before_action to call the method :authenticate_user!, provided by Devise.
+
+
+### H. Flash messages
+1. We’ll add flash messages as usual with partials in the application layout and Bootstrap alert boxes (https://getbootstrap.com/docs/5.2/components/alerts/) in the partial file.
+
+2. We can use some dismissable flash messages (https://getbootstrap.com/docs/5.2/components/alerts/#dismissing) as well, so the message can be closed by the user if they want.
+
+3. Create a file called _flash.html.erb:
+
+```
+<!-- app/views/shared/_flash.html.erb -->
+
+<div class="alert alert-<%= css_class %> alert-dismissible fade show" role="alert">
+  <%= message %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+```
+
+4. Add alerts with some conditional statements:
+
+```
+<!-- app/views/layouts/application.html.erb -->
+
+<!-- ... -->
+  <body>
+
+    <%= render partial: "shared/navbar" %>
+
+    <div class="container">
+      <% if notice.present? %>
+        <%= render partial: "shared/flash", locals: { message: notice, css_class: "success" } %>
+      <% end %>
+      
+      <% if alert.present? %>
+        <%= render partial: "shared/flash", locals: { message: alert, css_class: "danger" } %>
+      <% end %>
+
+      <%= yield %>
+    </div>
+  </body>
+</html>
+```
+
+5. Add quick margin bottom to the navbar container:
+
+```
+<!-- app/views/shared/_navbar.html.erb -->
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+  
+  <!-- ... -->
+
+</nav>
+```
+
+6. Remove `<p style="color: green"><%= notice %></p>` within: 
+  - app/views/photos/index.html.erb
+  - app/views/photos/show.html.erb
+It is because this tag will show the alert message twice; a duplicate from layout.html.erb.
+
+Also remove the same tags within the index.tml.erb and show.html.erb within views/likes, views/follow_requests, and views/shared.
+***
+
+Appendix A: rename branch
+
+ref.: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-branches-in-your-repository/renaming-a-branch
+
+Rename the brach
+
+1. Go to the main page of your repository on GitHub.com.
+
+2. In the file tree on the left, click the branch dropdown menu and choose "View all branches."
+
+3. Find the branch you want to rename, click its dropdown menu, and select "Rename branch."
+
+4. Enter the new branch name.
+
+5. Read the details about local environments, then click "Rename branch" to confirm.
+
+Update the local clone afterward
+
+1. Update the name of the default branch from the local clone of the repository on a computer or codepaces by typing:
+  ```
+  git branch -m OLD-BRANCH-NAME NEW-BRANCH-NAME
+  git fetch origin
+  git branch -u origin/NEW-BRANCH-NAME NEW-BRANCH-NAME
+  git remote set-head origin -a
+  ```
+
+2. Remove tracking references to the old branch name by typing:
+
+```
+git remote prune origin
+```
 ***
