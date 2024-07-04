@@ -1833,6 +1833,14 @@ Photogram Industrial - Part 4
 1. (6 min) Discuss how to create pulll request for specific diff between versions. give the pull request a meaningful name.
 2. While on the last branch, rg-starting-on-ui, lets create a new branch: `git checkout -b rg-user-profile`.
 
+3. Type:
+
+```
+photogram-industrial rg-user-profile % git status
+On branch rg-user-profile
+nothing to commit, working tree clean
+```
+
 ### B. User show page route
 
 ### C. User profile own photos
