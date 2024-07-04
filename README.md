@@ -222,7 +222,7 @@ photogram-industrial rg-create-database % git acm "Generated users"
 g sla
 
 or
-```
+
 git log --oneline --decorate --graph --all -s30
 ```
 
@@ -354,8 +354,8 @@ end
 
 ```
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  #Include default devise modules. Others available are:
+  #:confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
@@ -436,11 +436,11 @@ end
 1. modify the following file as well
 
 ```
-# app/models/user.rb
+#app/models/user.rb
 
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  #Include default devise modules. Others available are:
+  #:confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
   
@@ -452,7 +452,7 @@ end
 2. modify photo models
 
 ```
-# app/models/photo.rb
+#app/models/photo.rb
 
 class Photo < ApplicationRecord
   belongs_to :owner, class_name: "User"
@@ -532,7 +532,7 @@ end
 3. Make changes to the models file:
 
 ```
-# app/models/like.rb
+#app/models/like.rb
 
 class Like < ApplicationRecord
   belongs_to :fan, class_name: "User"
@@ -636,8 +636,7 @@ db/migrate/schema.rb file
 
 ### H. Annotate gem for :countter_cache
 
-1. 
-(13 min)
+1. (13 min)
 - This file tells us the current state of the database whenever the rails db:migrate command is called.
 - NEVER edit the schema.rb file. It is auto-generated whenever you run rake db:migrate.
 - Use the anotate gem to decide where to add the :counter_cache.
@@ -920,7 +919,7 @@ On to Photo. Aside from foreign keys and columns with default values, only the c
 #app/models/photo.rb
 
 class Photo < ApplicationRecord
-  # ...
+  #...
   has_many :fans, through: :likes
 
   validates :caption, presence: true
