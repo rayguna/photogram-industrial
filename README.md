@@ -1458,6 +1458,64 @@ Note that the routes have been reordered.
 
 ### C. Implementing bootstrap
 
-1. Delete the default: app/assets/stylesheets/scaffolds.scss (and individual, but empty files for each resource, like photos.scss).
+1. Delete the default: app/assets/stylesheets/scaffolds.scss (and individual, but empty files for each resource, like photos.scss). - these don't exist in the newer version of the project.
+
+2. Add navbar. Use the kitchen sink example:
+
+```
+<!-- app/views/layouts/application.html.erb -->
+
+<!-- ... -->
+  <body>
+
+    <%= render partial: "shared/navbar" %>
+
+    <%= yield %>
+  </body>
+</html>
+```
+
+3. Also add CDN:
+
+```
+<!-- app/views/layouts/application.html.erb -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Photogram Industrial</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    
+    <%= render partial: "shared/cdn_assets" %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+
+  </head>
+<!-- ... -->
+```
+
+4. put the yield statement in a container to give our page.
+
+```
+<!-- app/views/layouts/application.html.erb -->
+
+<!-- ... -->
+  <body>
+
+    <%= render partial: "shared/navbar" %>
+
+    <div class="container">
+      <%= yield %>
+    </div>
+
+  </body>
+</html>
+```
+
+5. Make a git commit.
+
 
 ***
