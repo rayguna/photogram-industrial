@@ -1517,5 +1517,48 @@ Note that the routes have been reordered.
 
 5. Make a git commit.
 
+### D. Starting navbar styling
+1. Change the homepage link at the top of the navbar:
 
+```
+<!-- app/views/shared/_navbar.html.erb -->
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <!-- <a class="navbar-brand" href="#">Navbar</a> -->
+  <%= link_to "Photogram", root_path, class: "navbar-brand" %>
+  
+  <!-- ... -->
+</nav>
+```
+
+2. Have the “Dropdown” menu contain all of the resources (their index pages will be fine), and for the sign in links to be on the right side of the navbar where the “Search” currently is.
+
+```
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <!-- ... -->
+    
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Resources
+          </a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="/photos">Photos</a>
+            <a class="dropdown-item" href="/comments">Comments</a>
+            <a class="dropdown-item" href="/follow_requests">Follow Requests</a>
+            <a class="dropdown-item" href="/likes">Likes</a>
+          </div>
+        </li>
+      </ul>
+      <!-- ... -->
+```
+
+### E. User account links
+
+### F. Flaw in sample_data
+
+### G. Force sign in
+
+### H. Flash messages
 ***
