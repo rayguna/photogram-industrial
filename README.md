@@ -1574,6 +1574,75 @@ Here is the code
 
 ### E. User account links
 
+1. Add the following routes:
+
+```
+- Edit profile: edit_user_registration_path
+
+- Sign out: destroy_user_session_path
+
+- Sign in: new_user_session_path
+
+- Sign up: new_user_registration_path
+```
+
+2. Add the following to the navbar:
+
+```
+<!-- app/views/shared/_navbar.html.erb -->
+
+<!-- ... -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <%= link_to "Edit profile", edit_user_registration_path, class: "nav-link" %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Sign out", destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link" %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Sign in", new_user_session_path, class: "nav-link" %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Sign up", new_user_registration_path, class: "nav-link" %>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+```
+
+For the “Sign out” link, we also needed to add the option data: { turbo_method: :delete }, because this is a DELETE HTTP request.
+
+3. Add if-else statement to the navbar for signed-in and signed out users.
+
+```
+<!-- app/views/shared/_navbar.html.erb -->
+
+<!-- ... -->
+      <ul class="navbar-nav">
+        <% if user_signed_in? %>
+          <li class="nav-item">
+            <%= link_to "Edit #{current_user.username}", edit_user_registration_path, class: "nav-link" %>
+          </li>
+          <li class="nav-item">
+            <%= link_to "Sign out", destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link" %>
+          </li>
+
+        <% else %>
+          <li class="nav-item">
+            <%= link_to "Sign in", new_user_session_path, class: "nav-link" %>
+          </li>
+          <li class="nav-item">
+            <%= link_to "Sign up", new_user_registration_path, class: "nav-link" %>
+          </li>
+
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</nav>
+```
+
 ### F. Flaw in sample_data
 
 ### G. Force sign in
