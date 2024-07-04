@@ -1697,6 +1697,45 @@ Here is the final contents of navbar:
 
 ### F. Flaw in sample_data
 
+1. Added users with known credentials inthe rake sample_data file:
+
+```
+# lib/tasks/dev.rake
+
+desc "Fill the database tables with some sample data"
+task sample_data: :environment do
+  p "Creating sample data"
+  starting = Time.now
+
+  if Rails.env.development?
+    FollowRequest.delete_all
+    Comment.delete_all
+    Like.delete_all
+    Photo.delete_all
+    User.delete_all
+  end
+
+  usernames = Array.new { Faker::Name.first_name }
+
+  usernames << "alice"
+  usernames << "bob"
+
+  usernames.each do |username|
+    User.create(
+      email: "#{username}@example.com",
+      password: "password",
+      username: username.downcase,
+      private: [true, false].sample,
+    )
+  end
+
+  12.times do
+    name = Faker::Name.first_name
+# ...
+```
+
+2. Now re-run rake sample_data, return to the live app, and try to sign in with the user: alice@example.com and password: password.
+
 ### G. Force sign in
 
 ### H. Flash messages
