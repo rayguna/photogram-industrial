@@ -1738,5 +1738,76 @@ task sample_data: :environment do
 
 ### G. Force sign in
 
+1. We don’t want to put user_signed_in? combined with conditionals all over the app. Rather, let’s add a force sign in to the ApplicationController:
+
+```
+# app/controllers/application_controller.rb
+
+class ApplicationController < ActionController::Base
+  before_action :authenticate_user!
+end
+```
+
+We use the method before_action to call the method :authenticate_user!, provided by Devise.
+
+
 ### H. Flash messages
+1. We’ll add flash messages as usual with partials in the application layout and Bootstrap alert boxes (https://getbootstrap.com/docs/5.2/components/alerts/) in the partial file.
+
+2. We can use some dismissable flash messages (https://getbootstrap.com/docs/5.2/components/alerts/#dismissing) as well, so the message can be closed by the user if they want.
+
+3. Create a file called _flash.html.erb:
+
+```
+<!-- app/views/shared/_flash.html.erb -->
+
+<div class="alert alert-<%= css_class %> alert-dismissible fade show" role="alert">
+  <%= message %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+```
+
+4. Add alerts with some conditional statements:
+
+```
+<!-- app/views/layouts/application.html.erb -->
+
+<!-- ... -->
+  <body>
+
+    <%= render partial: "shared/navbar" %>
+
+    <div class="container">
+      <% if notice.present? %>
+        <%= render partial: "shared/flash", locals: { message: notice, css_class: "success" } %>
+      <% end %>
+      
+      <% if alert.present? %>
+        <%= render partial: "shared/flash", locals: { message: alert, css_class: "danger" } %>
+      <% end %>
+
+      <%= yield %>
+    </div>
+  </body>
+</html>
+```
+
+5. Add quick margin bottom to the navbar container:
+
+```
+<!-- app/views/shared/_navbar.html.erb -->
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+  
+  <!-- ... -->
+
+</nav>
+```
+
+6. Remove `<p style="color: green"><%= notice %></p>` within: 
+  - app/views/photos/index.html.erb
+  - app/views/photos/show.html.erb
+It is because this tag will show the alert message twice; a duplicate from layout.html.erb.
+
+Also remove the same tags within the index.tml.erb and show.html.erb within views/likes, views/follow_requests, and views/shared.
 ***
