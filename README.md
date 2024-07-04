@@ -18,6 +18,9 @@ Cheatsheet: https://learn.firstdraft.com/
 
 [Part 3](#3)
 
+[Part 4](#4)
+
+
 ***
 
 Notes:
@@ -1811,7 +1814,33 @@ It is because this tag will show the alert message twice; a duplicate from layou
 Also remove the same tags within the index.tml.erb and show.html.erb within views/likes, views/follow_requests, and views/shared.
 ***
 
-Appendix A: rename branch
+<h2><a id ="4">Part 4</a></h2>
+
+Target: https://photogram-industrial.matchthetarget.com/users/sign_in
+
+Video: https://share.descript.com/view/h3WXOoqhNNU
+
+Lesson: https://learn.firstdraft.com/lessons/200-photogram-industrial-part-4
+
+Photogram Industrial - Part 4
+
+1. In the terminal, type `git pull origin main`.
+2. Then, type: `git push`.
+3. Finally, type `git status`.
+
+### A. Branch and open pull requests
+
+### B. User show page route
+
+### C. User profile own photos
+
+### D. User profile add comment
+
+### E. Tabbed interface
+
+<hr>
+
+### Appendix A: rename branch
 
 ref.: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-branches-in-your-repository/renaming-a-branch
 
