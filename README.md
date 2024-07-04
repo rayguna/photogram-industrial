@@ -22,7 +22,7 @@ Cheatsheet: https://learn.firstdraft.com/
 
 Notes:
 
-### <a id="1">Part 1</a>
+<h2><a id="1">Part 1</a></h2>
 
 ### A. Set up devise
 
@@ -381,7 +381,7 @@ Follow instructions. In particular, end with writing in the terminal the command
 
 3. Add views/shared folder to refactor partial view html files. Add if-else statement within _navbar.html.erb to differentiate between signed in and signed out navbars. 
 
-### <a id="2">Part 2</a>
+<h2><a id="2">Part 2</a></h2>
 
 Video: https://share.descript.com/view/P3PGeVSVtMW
 
@@ -1415,7 +1415,7 @@ Comment:
   validates :user_id, uniqueness: { scope: :photo_id, message: "has already liked this photo" }
   ```
 
-### <a id="3">Part 3</a>
+<h2><a id="3">Part 3</a></h2>
 
 Video: https://share.descript.com/view/KkN3XUdeop3
 
