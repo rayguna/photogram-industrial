@@ -30,9 +30,6 @@ task({ :sample_data => :environment }) do
       )
     end
   
-    12.times do
-      name = Faker::Name.first_name
-
     #add users
   
     12.times do

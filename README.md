@@ -1531,7 +1531,14 @@ Note that the routes have been reordered.
 </nav>
 ```
 
-2. Have the “Dropdown” menu contain all of the resources (their index pages will be fine), and for the sign in links to be on the right side of the navbar where the “Search” currently is.
+2. Modify the “Dropdown” menu contain all of the resources (their index pages will be fine), and for the sign in links to be on the right side of the navbar where the “Search” currently is. Look for:
+```
+<li class="nav-item dropdown">
+...
+</li>
+```
+
+Here is the code
 
 ```
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -1552,6 +1559,17 @@ Note that the routes have been reordered.
         </li>
       </ul>
       <!-- ... -->
+```
+
+3. Add padding:
+
+```
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <%= link_to "Photogram", root_path, class: "navbar-brand" %>
+      <!-- ... -->
+  </div>
+</nav>
 ```
 
 ### E. User account links

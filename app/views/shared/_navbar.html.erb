@@ -1,4 +1,4 @@
-    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
   <div class="container">
     <!--<a class="navbar-brand" href="/">Photogram</a>-->
     <%= link_to "Photogram", root_path, class: "navbar-brand" %>
@@ -58,13 +58,16 @@
               Your profile
             </a>
           </li>
+          
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              alice
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Resources
             </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="/users/edit">Edit profile</a>
-              <%= link_to "Sign out", destroy_user_session_path, method: :delete, class: "dropdown-item", data: { turbo_method: :delete } %>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="/photos">Photos</a>
+              <a class="dropdown-item" href="/comments">Comments</a>
+              <a class="dropdown-item" href="/follow_requests">Follow Requests</a>
+              <a class="dropdown-item" href="/likes">Likes</a>
             </div>
           </li>
 
