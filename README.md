@@ -222,7 +222,7 @@ photogram-industrial rg-create-database % git acm "Generated users"
 g sla
 
 or
-```
+
 git log --oneline --decorate --graph --all -s30
 ```
 
@@ -1415,7 +1415,7 @@ Comment:
   validates :user_id, uniqueness: { scope: :photo_id, message: "has already liked this photo" }
   ```
 
-### <a id="3"">Part 3</a>
+### <a id="3">Part 3</a>
 
 Video: https://share.descript.com/view/KkN3XUdeop3
 
@@ -1843,3 +1843,4 @@ Update the local clone afterward
 ```
 git remote prune origin
 ```
+***
