@@ -1830,6 +1830,9 @@ Photogram Industrial - Part 4
 
 ### A. Branch and open pull requests
 
+1. (6 min) Discuss how to create pulll request for specific diff between versions. give the pull request a meaningful name.
+2. While on the last branch, rg-starting-on-ui, lets create a new branch: `git checkout -b rg-user-profile`.
+
 ### B. User show page route
 
 ### C. User profile own photos
