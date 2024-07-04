@@ -1415,7 +1415,7 @@ Comment:
   validates :user_id, uniqueness: { scope: :photo_id, message: "has already liked this photo" }
   ```
 
-### <a id="3">Part 3</a>
+### <a id="3"">Part 3</a>
 
 Video: https://share.descript.com/view/KkN3XUdeop3
 
@@ -1811,3 +1811,35 @@ It is because this tag will show the alert message twice; a duplicate from layou
 
 Also remove the same tags within the index.tml.erb and show.html.erb within views/likes, views/follow_requests, and views/shared.
 ***
+
+Appendix A: rename branch
+
+ref.: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-branches-in-your-repository/renaming-a-branch
+
+Rename the brach
+
+1. Go to the main page of your repository on GitHub.com.
+
+2. In the file tree on the left, click the branch dropdown menu and choose "View all branches."
+
+3. Find the branch you want to rename, click its dropdown menu, and select "Rename branch."
+
+4. Enter the new branch name.
+
+5. Read the details about local environments, then click "Rename branch" to confirm.
+
+Update the local clone afterward
+
+1. Update the name of the default branch from the local clone of the repository on a computer or codepaces by typing:
+  ```
+  git branch -m OLD-BRANCH-NAME NEW-BRANCH-NAME
+  git fetch origin
+  git branch -u origin/NEW-BRANCH-NAME NEW-BRANCH-NAME
+  git remote set-head origin -a
+  ```
+
+2. Remove tracking references to the old branch name by typing:
+
+```
+git remote prune origin
+```
