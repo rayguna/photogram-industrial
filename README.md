@@ -1425,6 +1425,39 @@ target: https://share.descript.com/view/KkN3XUdeop3
 
 Notes:
 
-1. create a new branch: git checkout -b rb-starting-on-ui 
+
+### A. Create a new branch
+
+1. create a new branch: `git checkout -b rb-starting-on-ui`. 
+2. created the wrong name. Type `git checkout rg-photogram-industrial-2`.
+3. delete the previous branch, `git branch -D rb-starting-on-ui`.
+4. create a new branch with the correct name, `git checkout -b rg-starting-on-ui`.  
+
+### B. Create routes
+
+1. Create a root route:
+
+```
+#config/routes.rb
+
+Rails.application.routes.draw do
+  root "photos#index"
+  
+  devise_for :users
+  
+  resources :comments
+  resources :follow_requests
+  resources :likes
+  resources :photos
+end
+```
+
+Note that the routes have been reordered.
+
+2. Run the web app by typing in the terminal `bin/dev`.
+
+### C. Implementing bootstrap
+
+1. Delete the default: app/assets/stylesheets/scaffolds.scss (and individual, but empty files for each resource, like photos.scss).
 
 ***
