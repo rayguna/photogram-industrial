@@ -2031,6 +2031,196 @@ end
 
 ### D. User profile add comment
 
+1. Add a comment form at the bottom of each photo card. Because of the scaffold generator, the comment forms are ready for us as a partial in app/views/comments/ as _form.html.erb, which we will use:
+
+```
+<!-- app/views/users/show.html.erb -->
+
+<!-- ... -->
+                  <h5 class="mt-0"><%= comment.author.username %></h5>
+                  <p><%= comment.body %></p>
+                </div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+        <div class="card-body">
+          <%= render "comments/form", comment: Comment.new %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+```
+
+2.Modify show.html.erb.
+
+```
+<!-- app/views/users/show.html.erb -->
+
+<h1>
+  <%= @user.username %>
+</h1>
+
+<h2>Own photos</h2>
+
+<ul>
+  <% @user.own_photos.each do |photo| %>
+  <li>
+    <%= photo.caption %>
+    <%= image_tag photo.image %>
+  </li>
+  <% end %>
+</ul>
+
+<h2>Own photos</h2>
+
+<% @user.own_photos.each do |photo| %>
+  <div class="row mb-4">
+    <div class="col-md-6 offset-md-3">
+      <div class="card">
+        <%= image_tag photo.image, class: "card-img-top" %>
+        <div class="card-body">
+          <h5 class="card-title"><%= photo.owner.username %></h5>
+          <p class="card-text"><%= photo.caption %></p>
+        </div>
+        <ul class="list-group list-group-flush">
+        
+          <% photo.comments.each do |comment| %>
+            <li class="list-group-item">
+              <div class="d-flex">
+                <div class="flex-shrink-0">
+                  <%= image_tag photo.image %>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                  <h5 class="mt-0"><%= comment.author.username %></h5>
+                  <p><%= comment.body %></p>
+                </div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+        <div class="card-body">
+          <%= render "comments/form", comment: Comment.new %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+```
+
+3. Make some changes to comments/_form.html.erb:
+
+```
+<!-- app/views/comments/_form.html.erb -->
+
+<%= form_with(model: comment) do |form| %>
+  <% if comment.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(comment.errors.count, "error") %> prohibited this comment from being saved:</h2>
+
+      <ul>
+        <% comment.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form.hidden_field :photo_id %>
+
+  <div>
+    <%= form.text_area :body %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
+```
+
+4. Make the IDs auto-filled, we can do that in the comments_controller.rb in the create action:
+
+```
+# app/controllers/comments_controller.rb
+
+class CommentsController < ApplicationController
+  # ...
+  def create
+    @comment = Comment.new(comment_params)
+    @comment.author = current_user
+
+    respond_to do |format|
+      if @comment.save
+        format.html { redirect_to comment_url(@comment), notice: "Comment was successfully created." }
+        format.json { render :show, status: :created, location: @comment }
+      else
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: @comment.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  # ...
+end
+```
+
+5. In app/view/users/show.html.erb, replace `<%= render "comments/form", comment: Comment.new %>` with `<%= render "comments/form", comment: photo.comments.build %>`.
+
+6. Add bootstrap to `app/views/comments/_form.html.erb`:
+
+```
+<!-- app/views/comments/_form.html.erb -->
+
+<%= form_with(model: comment) do |form| %>
+  <% if comment.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(comment.errors.count, "error") %> prohibited this comment from being saved:</h2>
+
+      <ul>
+        <% comment.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form.hidden_field :photo_id %>
+
+  <div class="mb-3">
+    <%= form.text_area :body, class: "form-control" %>
+  </div>
+
+  <div>
+    <%= form.submit class: "btn btn-outline-secondary btn-block" %>
+  </div>
+<% end %>
+```
+
+7. When user creates comment, redirect to the previous location.
+
+```
+# app/controllers/comments_controller.rb
+
+class CommentsController < ApplicationController
+  # ...
+  def create
+    @comment = Comment.new(comment_params)
+    @comment.author = current_user
+
+    respond_to do |format|
+      if @comment.save
+        format.html { redirect_back fallback_location: root_path, notice: "Comment was successfully created." }
+        format.json { render :show, status: :created, location: @comment }
+      else
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: @comment.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  # ...
+end
+```
+
 ### E. Tabbed interface
 
 <hr>
