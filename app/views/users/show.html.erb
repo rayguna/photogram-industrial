@@ -4,17 +4,6 @@
 
 <h2>Own photos</h2>
 
-<ul>
-  <% @user.own_photos.each do |photo| %>
-  <li>
-    <%= photo.caption %>
-    <%= image_tag photo.image %>
-  </li>
-  <% end %>
-</ul>
-
-<h2>Own photos</h2>
-
 <% @user.own_photos.each do |photo| %>
   <div class="row mb-4">
     <div class="col-md-6 offset-md-3">
