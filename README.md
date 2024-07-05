@@ -1891,6 +1891,144 @@ end
 
 ### C. User profile own photos
 
+1. Add photos on the users page:
+
+```
+<!-- app/views/users/show.html.erb -->
+
+<h1>
+  <%= @user.username %>
+</h1>
+
+<h2>Own photos</h2>
+
+<ul>
+  <% @user.own_photos.each do |photo| %>
+  <li>
+    <%= photo.caption %>
+    <img src="<%= photo.image %>">
+  </li>
+  <% end %>
+</ul>
+```
+
+2. Modify the above using helper method:
+
+```
+<!-- app/views/users/show.html.erb -->
+
+<!-- ... -->
+<ul>
+  <% @user.own_photos.each do |photo| %>
+  <li>
+    <%= photo.caption %>
+    <%= image_tag photo.image %>
+  </li>
+  <% end %>
+</ul>
+```
+
+3. Add the following:
+
+```
+<!-- app/views/users/show.html.erb -->
+
+<!-- ... -->
+<h2>Own photos</h2>
+
+<% @user.own_photos.each do |photo| %>
+  <div class="row mb-4">
+    <div class="col-md-6 offset-md-3">
+      <div class="card">
+        <%= image_tag photo.image, class: "card-img-top" %>
+        <div class="card-body">
+          <h5 class="card-title"><%= photo.owner.username %></h5>
+          <p class="card-text"><%= photo.caption %></p>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">An item</li>
+          <li class="list-group-item">A second item</li>
+          <li class="list-group-item">A third item</li>
+        </ul>
+        <div class="card-body">
+          <a href="#" class="card-link">Card link</a>
+          <a href="#" class="card-link">Another link</a>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+```
+
+4. Implement bootstrap:
+
+```
+<% @user.own_photos.each do |photo| %>
+  <div class="row mb-4">
+    <div class="col-md-6 offset-md-3">
+      <div class="card">
+        <%= image_tag photo.image, class: "card-img-top" %>
+        <div class="card-body">
+          <h5 class="card-title"><%= photo.owner.username %></h5>
+          <p class="card-text"><%= photo.caption %></p>
+        </div>
+        <ul class="list-group list-group-flush">
+          <% photo.comments.each do |comment| %>
+            <li class="list-group-item">
+              <%= comment.body %>
+            </li>
+          <% end %>
+        </ul>
+        <div class="card-body">
+          <a href="#" class="card-link">Card link</a>
+          <a href="#" class="card-link">Another link</a>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+```
+
+5. Modify further to grab media objects.
+
+```
+<!-- app/views/users/show.html.erb -->
+
+<!-- ... -->
+<% @user.own_photos.each do |photo| %>
+  <div class="row mb-4">
+    <div class="col-md-6 offset-md-3">
+      <div class="card">
+        <%= image_tag photo.image, class: "card-img-top" %>
+        <div class="card-body">
+          <h5 class="card-title"><%= photo.owner.username %></h5>
+          <p class="card-text"><%= photo.caption %></p>
+        </div>
+        <ul class="list-group list-group-flush">
+          <% photo.comments.each do |comment| %>
+            <li class="list-group-item">
+              <div class="d-flex">
+                <div class="flex-shrink-0">
+                  <img src="..." alt="...">
+                </div>
+                <div class="flex-grow-1 ms-3">
+                  <h5 class="mt-0"><%= comment.author.username %></h5>
+                  <p><%= comment.body %></p>
+                </div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+        <div class="card-body">
+          <a href="#" class="card-link">Card link</a>
+          <a href="#" class="card-link">Another link</a>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+```
+
 ### D. User profile add comment
 
 ### E. Tabbed interface
