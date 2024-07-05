@@ -1842,7 +1842,7 @@ nothing to commit, working tree clean
 
 4. run the server with `bin/dev`.
 
-### B. Implement RCAV
+### B. User show page route - Implement RCAV
 
 1. Most of the routes are not yet working.
 
@@ -1888,8 +1888,6 @@ end
 
 <h1>Hi <%=@user.username%></h1>
 ```
-
-### B. User show page route
 
 ### C. User profile own photos
 
