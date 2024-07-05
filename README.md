@@ -2534,6 +2534,100 @@ and
 </li>
 ```
 
+8. (52 min) Create hyperlinks for followers and following by completing the RCAV route:
+
+- Routes
+
+```
+#config/routes.rb
+
+Rails.application.routes.draw do
+  root "photos#index"
+
+  devise_for :users
+
+  resources :likes
+  resources :follow_requests
+  resources :comments
+  resources :photos
+  
+  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+
+  # Defines the root path route ("/")
+  # root "articles#index"
+
+  get ":username/liked" => "photos#liked", as: :liked_photos
+  get ":username/feed" => "photos#feed", as: :feed_photos
+  get ":username/followers" => "photos#followers", as: :followers_photos
+  get ":username/following" => "photos#following", as: :following_photos
+
+  get ":username" => "users#show", as: :user
+
+end 
+```
+
+- Controller
+
+```
+#controllers/photos_controller.rb
+
+  def followers
+    
+  end
+
+  def following
+
+  end
+```
+- Views 
+
+```
+#views/photos/followers.html.erb
+
+<div clas"row">
+  <div class="col-md-6 offset-md-3">
+
+    <h1>
+      <%= current_user.username %>
+    </h1>
+
+    <ul class="nav nav-pills nav-justified">
+
+      <li class="nav-item">
+        <%= link_to "Posts", user_path(current_user.username), class: "nav-link" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Liked photos", liked_photos_path(current_user.username), class: "nav-link" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Followers", followers_photos_path(current_user.username), style: "color: red;", class: "nav-link" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Following", following_photos_path(current_user.username), class: "nav-link" %>
+      </li>
+    </ul>
+
+  </div>
+</div>
+
+<%followers = FollowRequest.where(:recipient_id => current_user.id).where(:status=>"accepted")%>
+<%= followers.count%>
+
+<% followers.each do |follower| %>
+  <ul class="list-group">
+    <li class="list-group-item"><%=User.where(:id=>follower.sender_id)[0].username%></li>
+  </ul>
+<% end %>
+```
+
+and
+
+```
+#views/photos/following.html.erb
+
+...
+```
+
 <hr>
 
 ### Appendix A: rename branch

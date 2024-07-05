@@ -1,0 +1,42 @@
+<div clas"row">
+  <div class="col-md-6 offset-md-3">
+
+    <h1>
+      <%= current_user.username %>
+    </h1>
+
+    <ul class="nav nav-pills nav-justified">
+
+      <li class="nav-item">
+        <%= link_to "Posts", user_path(current_user.username), class: "nav-link" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Liked photos", liked_photos_path(current_user.username), class: "nav-link" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Followers", followers_photos_path(current_user.username), style: "color: red;", class: "nav-link" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Following", following_photos_path(current_user.username), class: "nav-link" %>
+      </li>
+    </ul>
+
+  </div>
+</div>
+
+<%followers = FollowRequest.where(:recipient_id => current_user.id).where(:status=>"accepted")%>
+<%= followers.count%>
+
+<div class="row mb-4">
+    <div class="col-md-6 offset-md-3">
+      <div class="card">
+
+        <% followers.each do |follower| %>
+          <ul class="list-group">
+            <li class="list-group-item"><%=User.where(:id=>follower.sender_id)[0].username%></li>
+          </ul>
+        <% end %>
+   
+    </div>
+  </div>
+</div>
