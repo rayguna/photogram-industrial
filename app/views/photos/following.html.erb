@@ -24,8 +24,19 @@
   </div>
 </div>
 
-<%= current_user.liked_photos.count %>
+<%followings = FollowRequest.where(:sender_id => current_user.id).where(:status=>"accepted")%>
+<%= followings.count%>
 
-<% current_user.own_photos.each do |photo| %>
-  <%= render "photos/photo", photo: photo%>
-<% end %>
+<div class="row mb-4">
+    <div class="col-md-6 offset-md-3">
+      <div class="card">
+
+        <% followings.each do |following| %>
+          <ul class="list-group">
+            <li class="list-group-item"><%=User.where(:id=>following.recipient_id)[0].username%></li>
+          </ul>
+        <% end %>
+   
+    </div>
+  </div>
+</div>
