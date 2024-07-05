@@ -1833,12 +1833,60 @@ Photogram Industrial - Part 4
 1. (6 min) Discuss how to create pulll request for specific diff between versions. give the pull request a meaningful name.
 2. While on the last branch, rg-starting-on-ui, lets create a new branch: `git checkout -b rg-user-profile`.
 
-3. Type:
-
+3. Type: 
 ```
 photogram-industrial rg-user-profile % git status
 On branch rg-user-profile
 nothing to commit, working tree clean
+```
+
+4. run the server with `bin/dev`.
+
+### B. Implement RCAV
+
+1. Most of the routes are not yet working.
+
+2. Make the dynamic users/:id route to work.
+
+3. Routes - Add `, only: :show` to provide the routes that we want to create:
+
+```
+# config/routes.rb
+
+Rails.application.routes.draw do
+  root "photos#index"
+
+  devise_for :users
+  
+  resources :comments
+  resources :follow_requests
+  resources :likes
+  resources :photos, only: :show
+
+  get "/:username" => "users#show", as: :user
+end
+```
+
+4. Controller - Navigating to /alice will trigger `uninitialized constant UsersController`, since the users_controller is missing.
+
+```
+# app/controllers/users_controller.rb
+
+class UsersController < ApplicationController
+  def show
+    @user = User.find_by!(username: params.fetch(:username))
+  end
+end
+```
+
+- find_by! with an exclamation mark is to throw the record not found error.
+
+5. View - Create the view file, `app/views/users/show.html.erb`. The render statement is not needed because we use a conventional name.
+
+```
+#app/views/users/show.html.erb
+
+<h1>Hi <%=@user.username%></h1>
 ```
 
 ### B. User show page route
