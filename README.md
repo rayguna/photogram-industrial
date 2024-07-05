@@ -2511,6 +2511,29 @@ get ":username/liked" => "photos#liked", as: :liked_photos
 
 In the liked.html.erb file, change `@user` to `current_user`.
 
+7. change the font to red if tab is selected:
+
+```
+# views/users/show.html.erb
+
+<li class="nav-item">
+  <%= link_to "Posts", user_path(@user.username), style: "color: red;", class: "nav-link" %>
+</li>
+```
+
+and 
+
+```
+# views/photos/liked.html.erb
+
+<li class="nav-item">
+  <%= link_to "Posts", user_path(current_user.username), class: "nav-link" %>
+</li>
+<li class="nav-item">
+  <%= link_to "Liked photos", liked_photos_path(current_user.username), style: "color: red;", class: "nav-link" %>
+</li>
+```
+
 <hr>
 
 ### Appendix A: rename branch
