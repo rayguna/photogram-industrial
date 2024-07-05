@@ -14,10 +14,10 @@
         <%= link_to "Liked photos", liked_photos_path(current_user.username), class: "nav-link" %>
       </li>
       <li class="nav-item">
-        <%= link_to "Feed", feed_photos_path(current_user.username), class: "nav-link" %>
+        <%= link_to "Feed", feed_photos_path(current_user.username), style: "color: red;", class: "nav-link" %>
       </li>
       <li class="nav-item">
-        <%= link_to "Followers", followers_photos_path(current_user.username), style: "color: red;", class: "nav-link" %>
+        <%= link_to "Followers", followers_photos_path(current_user.username), class: "nav-link" %>
       </li>
       <li class="nav-item">
         <%= link_to "Following", following_photos_path(current_user.username), class: "nav-link" %>
@@ -27,19 +27,11 @@
   </div>
 </div>
 
-<%followers = FollowRequest.where(:recipient_id => current_user.id).where(:status=>"accepted")%>
-<%= followers.count%>
+<%followings = FollowRequest.where(:sender_id => current_user.id).where(:status=>"accepted")%>
+<%= followings.count%>
 
-<div class="row mb-4">
-    <div class="col-md-6 offset-md-3">
-      <div class="card">
-
-        <% followers.each do |follower| %>
-          <ul class="list-group">
-            <li class="list-group-item"><%=User.where(:id=>follower.sender_id)[0].username%></li>
-          </ul>
-        <% end %>
-   
-    </div>
-  </div>
-</div>
+<% followings.each do |following| %>
+  <% User.where(:id=>following.recipient_id)[0].own_photos.each do |photo| %>
+      <%= render "photos/photo", photo: photo %>
+  <% end %>
+<% end %>
