@@ -8,10 +8,10 @@
     <ul class="nav nav-pills nav-justified">
 
       <li class="nav-item">
-        <%= link_to "Posts", user_path(@user.username), class: "nav-link active" %>
+        <%= link_to "Posts", user_path(current_user.username), class: "nav-link" %>
       </li>
       <li class="nav-item">
-        <%= link_to "Liked photos", liked_photos_path(@user.username), class: "nav-link" %>
+        <%= link_to "Liked photos", liked_photos_path(current_user.username), class: "nav-link active" %>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">Followers</a>
@@ -24,8 +24,8 @@
   </div>
 </div>
 
-<%= current_user.own_photos.count %>
+<%= current_user.liked_photos.count %>
 
 <% current_user.own_photos.each do |photo| %>
-  <%= render "photos/photo", photo: photo %>
+  <%= render "photos/photo", photo: photo%>
 <% end %>

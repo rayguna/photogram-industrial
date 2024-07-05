@@ -2293,7 +2293,7 @@ end
 <% end %>
 ```
 
-3. Make the tabs functional. Each tab leads to its own route (e.g., /alice/feed, alice/followers, etc. Let’s begin with /alice/liked, or, more generally, /:username/liked). Let's generate the RCAV series.
+3. Make the tabs functional. Each tab leads to its own route (e.g., /alice/feed, alice/followers, etc. Let’s begin with /alice/liked, or, more generally, /:username/liked). Let's generate the RCAV series for liked.
 (43 min)
 - Routes
 
@@ -2340,28 +2340,35 @@ class UsersController < ApplicationController
 end
 ```
 
+and 
+
+```
+#app/controller/photos_controller.rb
+
+  def liked
+    @user = User.find_by!(Username: params.fetch(:username))
+  end
+```
+
 - Views: link the tabs to its own route.
 
 ```
-<!-- app/views/users/show.html.erb -->
+<!-- app/views/users/liked.html.erb -->
 
-<div class="row">
-  <div class="col md-6 offset-3">
+<div clas"row">
+  <div class="col-md-6 offset-md-3">
+
     <h1>
       <%= @user.username %>
     </h1>
 
     <ul class="nav nav-pills nav-justified">
+
       <li class="nav-item">
-        <!--<a class="nav-link active" href="#">Posts</a>-->
         <%= link_to "Posts", user_path(@user.username), class: "nav-link" %>
       </li>
       <li class="nav-item">
-        <!--<a class="nav-link" href="#">Liked photos</a>-->
-        <%= link_to "Liked photos", liked_path(@user.username), class: "nav-link" %>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Feed</a>
+        <%= link_to "Liked photos", liked_photos_path(@user.username), class: "nav-link active" %>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">Followers</a>
@@ -2370,10 +2377,13 @@ end
         <a class="nav-link" href="#">Following</a>
       </li>
     </ul>
+
   </div>
 </div>
 
-<% @user.own_photos.each do |photo| %>
+<%= current_user.liked_photos.count %>
+
+<% current_user.liked_photos.each do |photo| %>
   <div class="row mb-4">
     <div class="col-md-6 offset-md-3">
       <div class="card">
@@ -2405,7 +2415,88 @@ end
     </div>
   </div>
 <% end %>
+```
 
+4. Refactor with partial (50 min)
+
+```
+# potos/users/show.html.erb
+
+<div clas"row">
+  <div class="col-md-6 offset-md-3">
+
+    <h1>
+      <%= current_user.username %>
+    </h1>
+
+    <ul class="nav nav-pills nav-justified">
+
+      <li class="nav-item">
+        <%= link_to "Posts", user_path(@user.username), class: "nav-link active" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Liked photos", liked_photos_path(@user.username), class: "nav-link" %>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Followers</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Following</a>
+      </li>
+    </ul>
+
+  </div>
+</div>
+
+<%= current_user.own_photos.count %>
+
+<% current_user.own_photos.each do |photo| %>
+  <%= render "photos/photo", photo: photo %>
+<% end %>
+```
+
+and
+
+```
+#views/photos/_photo.hml.erb
+
+<div clas"row">
+  <div class="col-md-6 offset-md-3">
+
+    <h1>
+      <%= current_user.username %>
+    </h1>
+
+    <ul class="nav nav-pills nav-justified">
+
+      <li class="nav-item">
+        <%= link_to "Posts", user_path(@user.username), class: "nav-link active" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Liked photos", liked_photos_path(@user.username), class: "nav-link" %>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Followers</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Following</a>
+      </li>
+    </ul>
+
+  </div>
+</div>
+
+<%= current_user.own_photos.count %>
+
+<% current_user.own_photos.each do |photo| %>
+  <%= render "photos/photo", photo: photo %>
+<% end %>
+```
+
+5. Do the same refactoring with liked.html.erb
+
+```
+views/users/liked.html.erb
 ```
 
 <hr>
