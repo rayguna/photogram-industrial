@@ -2225,6 +2225,43 @@ end
 
 ### E. Tabbed interface
 
+1. Create a new branch `git checkout -b rg-tabbed-interface`. 
+
+2. modify show.html.erb:
+
+```
+<!-- app/views/users/show.html.erb -->
+
+<div class="row">
+  <div class="col md-6 offset-3">
+    <h1>
+      <%= @user.username %>
+    </h1>
+
+    <ul class="nav nav-pills nav-justified">
+      <li class="nav-item">
+        <a class="nav-link active" href="#">Posts</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Liked photos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Feed</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Followers</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Following</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<% @user.own_photos.each do |photo| %>
+  <!-- ... -->
+```
+
 <hr>
 
 ### Appendix A: rename branch
