@@ -2796,8 +2796,25 @@ To:
 
 ```
 #views/photos/following.html.erb
+
+<%= current_user.leaders.count%>
+
+<div class="row mb-4">
+    <div class="col-md-6 offset-md-3">
+      <div class="card">
+
+        <% current_user.leaders.each do |leader| %>
+          <ul class="list-group">
+            <li class="list-group-item"><%=leader.username%></li>
+          </ul>
+        <% end %>
+   
+    </div>
+  </div>
+</div>
 ```
 
+3. Still passed all tests from rake grade after implementing the modifications.
 
 <hr>
 
