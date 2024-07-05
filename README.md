@@ -1822,6 +1822,8 @@ Video: https://share.descript.com/view/h3WXOoqhNNU
 
 Lesson: https://learn.firstdraft.com/lessons/200-photogram-industrial-part-4
 
+Note: Load photogram industrial assignment part 1 for grading.
+
 Photogram Industrial - Part 4
 
 1. In the terminal, type `git pull origin main`.
