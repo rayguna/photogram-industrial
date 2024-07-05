@@ -2499,6 +2499,18 @@ and
 views/users/liked.html.erb
 ```
 
+6. Move liked.html.erb into views/photos/ folder:
+
+Change routes.rb to:
+
+```
+#config/routes.rb
+
+get ":username/liked" => "photos#liked", as: :liked_photos
+```
+
+In the liked.html.erb file, change `@user` to `current_user`.
+
 <hr>
 
 ### Appendix A: rename branch
