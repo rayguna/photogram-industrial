@@ -2816,6 +2816,28 @@ To:
 
 3. Still passed all tests from rake grade after implementing the modifications.
 
+4. Made further changes to feed.html.erb by implementing the feed encapsulated method within Users table:
+
+From:
+```
+<%=current_user.leaders.count %>
+
+<% current_user.leaders.each do |leader| %>
+  <% leader.own_photos.each do |photo| %>
+      <%= render "photos/photo", photo: photo %>
+  <% end %>
+<% end %>
+```
+
+To:
+```
+<%=current_user.feed.count %>
+
+<% current_user.feed.each do |photo| %>
+  <%= render "photos/photo", photo: photo %>
+<% end %>
+```
+
 <hr>
 
 ### Appendix A: rename branch

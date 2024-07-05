@@ -27,10 +27,8 @@
   </div>
 </div>
 
-<%=current_user.leaders.count %>
+<%=current_user.feed.count %>
 
-<% current_user.leaders.each do |leader| %>
-  <% leader.own_photos.each do |photo| %>
-      <%= render "photos/photo", photo: photo %>
-  <% end %>
+<% current_user.feed.each do |photo| %>
+  <%= render "photos/photo", photo: photo %>
 <% end %>
