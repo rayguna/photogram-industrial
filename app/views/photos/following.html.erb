@@ -27,16 +27,15 @@
   </div>
 </div>
 
-<%followings = FollowRequest.where(:sender_id => current_user.id).where(:status=>"accepted")%>
-<%= followings.count%>
+<%= current_user.leaders.count%>
 
 <div class="row mb-4">
     <div class="col-md-6 offset-md-3">
       <div class="card">
 
-        <% followings.each do |following| %>
+        <% current_user.leaders.each do |leader| %>
           <ul class="list-group">
-            <li class="list-group-item"><%=User.where(:id=>following.recipient_id)[0].username%></li>
+            <li class="list-group-item"><%=leader.username%></li>
           </ul>
         <% end %>
    
