@@ -1,0 +1,30 @@
+<!-- _tab.html.erb -->
+
+  <ul class="nav nav-pills nav-justified">
+
+  <!-- Posts tab -->
+  <li class="nav-item">
+    <%= link_to "Posts", user_path(current_user.username), class: "nav-link #{"active" if active_tab == 'Posts'}", style: ("color:red;" if active_tab == 'Posts') %>
+  </li>
+
+  <!-- Liked photos tab -->
+  <li class="nav-item">
+    <%= link_to "Liked photos", liked_photos_path(current_user.username), class: "nav-link #{"active" if active_tab == 'Liked photos'}", style: ("color:red;" if active_tab == 'Liked photos') %>
+  </li>
+
+  <!-- Feed tab -->
+  <li class="nav-item">
+    <%= link_to "Feed", feed_photos_path(current_user.username), class: "nav-link #{"active" if active_tab == 'Feed'}", style: ("color:red;" if active_tab == 'Feed') %>
+  </li>
+
+  <!-- Followers tab -->
+  <li class="nav-item">
+    <%= link_to "Followers", followers_photos_path(current_user.username), class: "nav-link #{"active" if active_tab == 'Followers'}", style: ("color:red;" if active_tab == 'Followers') %>
+  </li>
+
+  <!-- Following tab -->
+  <li class="nav-item">
+    <%= link_to "Following", following_photos_path(current_user.username), class: "nav-link #{"active" if active_tab == 'Following'}", style: ("color:red;" if active_tab == 'Following') %>
+  </li>
+
+</ul>

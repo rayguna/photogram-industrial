@@ -5,24 +5,7 @@
       <%= current_user.username %>
     </h1>
 
-    <ul class="nav nav-pills nav-justified">
-
-      <li class="nav-item">
-        <%= link_to "Posts", user_path(current_user.username), style: "color: red;", class: "nav-link" %>
-      </li>
-      <li class="nav-item">
-        <%= link_to "Liked photos", liked_photos_path(current_user.username), class: "nav-link" %>
-      </li>
-      <li class="nav-item">
-        <%= link_to "Feed", feed_photos_path(current_user.username), class: "nav-link" %>
-      </li>
-      <li class="nav-item">
-        <%= link_to "Followers", followers_photos_path(current_user.username), class: "nav-link" %>
-      </li>
-      <li class="nav-item">
-        <%= link_to "Following", following_photos_path(current_user.username), class: "nav-link" %>
-      </li>
-    </ul>
+    <%= render "shared/tab", active_tab: "Posts" %>
 
   </div>
 </div>
