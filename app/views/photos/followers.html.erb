@@ -1,0 +1,28 @@
+<div clas"row">
+  <div class="col-md-6 offset-md-3">
+
+    <h1>
+      <%= current_user.username %>
+    </h1>
+
+    <%= render "shared/tab", active_tab: "Followers" %>
+
+  </div>
+</div>
+
+<%followers = FollowRequest.where(:recipient_id => current_user.id).where(:status=>"accepted")%>
+<%= followers.count%>
+
+<div class="row mb-4">
+    <div class="col-md-6 offset-md-3">
+      <div class="card">
+
+        <% followers.each do |follower| %>
+          <ul class="list-group">
+            <li class="list-group-item"><%=User.where(:id=>follower.sender_id)[0].username%></li>
+          </ul>
+        <% end %>
+   
+    </div>
+  </div>
+</div>

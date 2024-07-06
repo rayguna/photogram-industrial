@@ -15,11 +15,10 @@
 
   <%= form.hidden_field :photo_id %>
 
-  <div class="mb-3">
+  <div class="d-grid gap-2 form-group">
+    <%=form.label :body%>
     <%= form.text_area :body, class: "form-control" %>
-  </div>
-
-  <div>
     <%= form.submit class: "btn btn-outline-secondary btn-block" %>
   </div>
+  
 <% end %>

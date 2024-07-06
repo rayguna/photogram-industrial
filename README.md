@@ -2169,6 +2169,7 @@ end
 5. In app/view/users/show.html.erb, replace `<%= render "comments/form", comment: Comment.new %>` with `<%= render "comments/form", comment: photo.comments.build %>`.
 
 6. Add bootstrap to `app/views/comments/_form.html.erb`:
+(34 min)
 
 ```
 <!-- app/views/comments/_form.html.erb -->
@@ -2188,11 +2189,12 @@ end
 
   <%= form.hidden_field :photo_id %>
 
-  <div class="mb-3">
+  <div class="form-grop">
+    <%=form.label :body%>
     <%= form.text_area :body, class: "form-control" %>
   </div>
 
-  <div>
+  <div class="actions">
     <%= form.submit class: "btn btn-outline-secondary btn-block" %>
   </div>
 <% end %>
@@ -2224,6 +2226,617 @@ end
 ```
 
 ### E. Tabbed interface
+(39 min)
+
+1. Create a new branch `git checkout -b rg-tabbed-interface`. 
+
+2. Modify show.html.erb to create tabbed interface using bootstrap.
+
+```
+<div clas"row">
+  <div class="col-md-6 offset-md-3">
+
+    <h1>
+      <%= @user.username %>
+    </h1>
+
+    <ul class="nav nav-pills nav-justified">
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="#">Active</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Much longer nav link</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Link</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+      </li>
+    </ul>
+
+  </div>
+</div>
+
+
+<% @user.own_photos.each do |photo| %>
+  <div class="row mb-4">
+    <div class="col-md-6 offset-md-3">
+      <div class="card">
+        <%= image_tag photo.image, class: "card-img-top" %>
+        <div class="card-body">
+          <h5 class="card-title"><%= photo.owner.username %></h5>
+          <p class="card-text"><%= photo.caption %></p>
+        </div>
+        <ul class="list-group list-group-flush">
+        
+          <% photo.comments.each do |comment| %>
+            <li class="list-group-item">
+              <div class="d-flex">
+                <div class="flex-shrink-0">
+                  <%= image_tag photo.image %>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                  <h5 class="mt-0"><%= comment.author.username %></h5>
+                  <p><%= comment.body %></p>
+                </div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+        <div class="card-body">
+          <%= render "comments/form", comment: photo.comments.build %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+```
+
+3. Make the tabs functional. Each tab leads to its own route (e.g., /alice/feed, alice/followers, etc. Let’s begin with /alice/liked, or, more generally, /:username/liked). Let's generate the RCAV series for liked.
+(43 min)
+- Routes
+
+```
+# config/routes.rb
+
+Rails.application.routes.draw do
+  root "photos#index"
+
+  devise_for :users
+
+  resources :likes
+  resources :follow_requests
+  resources :comments
+  resources :photos
+  
+  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+
+  # Defines the root path route ("/")
+  # root "articles#index"
+
+  get ":username/liked" => "users#liked", as: :liked_photos
+
+  get ":username" => "users#show", as: :user
+
+end 
+```
+
+Modify the controller accordingly.
+
+- Controller
+
+```
+# app/controllers/users_controller.rb
+
+class UsersController < ApplicationController
+  def show
+    @user = User.find_by!(username: params.fetch(:username))
+  end
+
+  def liked
+    @user = User.find_by!(username: params.fetch(:username))
+  end
+end
+```
+
+and 
+
+```
+#app/controller/photos_controller.rb
+
+  def liked
+    @user = User.find_by!(Username: params.fetch(:username))
+  end
+```
+
+- Views: link the tabs to its own route.
+
+```
+<!-- app/views/users/liked.html.erb -->
+
+<div clas"row">
+  <div class="col-md-6 offset-md-3">
+
+    <h1>
+      <%= @user.username %>
+    </h1>
+
+    <ul class="nav nav-pills nav-justified">
+
+      <li class="nav-item">
+        <%= link_to "Posts", user_path(@user.username), class: "nav-link" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Liked photos", liked_photos_path(@user.username), class: "nav-link active" %>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Followers</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Following</a>
+      </li>
+    </ul>
+
+  </div>
+</div>
+
+<%= current_user.liked_photos.count %>
+
+<% current_user.liked_photos.each do |photo| %>
+  <div class="row mb-4">
+    <div class="col-md-6 offset-md-3">
+      <div class="card">
+        <%= image_tag photo.image, class: "card-img-top" %>
+        <div class="card-body">
+          <h5 class="card-title"><%= photo.owner.username %></h5>
+          <p class="card-text"><%= photo.caption %></p>
+        </div>
+        <ul class="list-group list-group-flush">
+        
+          <% photo.comments.each do |comment| %>
+            <li class="list-group-item">
+              <div class="d-flex">
+                <div class="flex-shrink-0">
+                  <%= image_tag photo.image %>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                  <h5 class="mt-0"><%= comment.author.username %></h5>
+                  <p><%= comment.body %></p>
+                </div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+        <div class="card-body">
+          <%= render "comments/form", comment: photo.comments.build %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+```
+
+4. Refactor with partial (50 min)
+
+```
+# potos/users/show.html.erb
+
+<div clas"row">
+  <div class="col-md-6 offset-md-3">
+
+    <h1>
+      <%= current_user.username %>
+    </h1>
+
+    <ul class="nav nav-pills nav-justified">
+
+      <li class="nav-item">
+        <%= link_to "Posts", user_path(@user.username), class: "nav-link active" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Liked photos", liked_photos_path(@user.username), class: "nav-link" %>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Followers</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Following</a>
+      </li>
+    </ul>
+
+  </div>
+</div>
+
+<%= current_user.own_photos.count %>
+
+<% current_user.own_photos.each do |photo| %>
+  <%= render "photos/photo", photo: photo %>
+<% end %>
+```
+
+and
+
+```
+#views/photos/_photo.hml.erb
+
+<div clas"row">
+  <div class="col-md-6 offset-md-3">
+
+    <h1>
+      <%= current_user.username %>
+    </h1>
+
+    <ul class="nav nav-pills nav-justified">
+
+      <li class="nav-item">
+        <%= link_to "Posts", user_path(@user.username), class: "nav-link active" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Liked photos", liked_photos_path(@user.username), class: "nav-link" %>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Followers</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Following</a>
+      </li>
+    </ul>
+
+  </div>
+</div>
+
+<%= current_user.own_photos.count %>
+
+<% current_user.own_photos.each do |photo| %>
+  <%= render "photos/photo", photo: photo %>
+<% end %>
+```
+
+5. Do the same refactoring with liked.html.erb
+
+```
+views/users/liked.html.erb
+```
+
+6. Move liked.html.erb into views/photos/ folder:
+
+Change routes.rb to:
+
+```
+#config/routes.rb
+
+get ":username/liked" => "photos#liked", as: :liked_photos
+```
+
+In the liked.html.erb file, change `@user` to `current_user`.
+
+7. change the font to red if tab is selected:
+
+```
+# views/users/show.html.erb
+
+<li class="nav-item">
+  <%= link_to "Posts", user_path(@user.username), style: "color: red;", class: "nav-link" %>
+</li>
+```
+
+and 
+
+```
+# views/photos/liked.html.erb
+
+<li class="nav-item">
+  <%= link_to "Posts", user_path(current_user.username), class: "nav-link" %>
+</li>
+<li class="nav-item">
+  <%= link_to "Liked photos", liked_photos_path(current_user.username), style: "color: red;", class: "nav-link" %>
+</li>
+```
+
+8. (52 min) Create hyperlinks for followers and following by completing the RCAV route:
+
+- Routes
+
+```
+#config/routes.rb
+
+Rails.application.routes.draw do
+  root "photos#index"
+
+  devise_for :users
+
+  resources :likes
+  resources :follow_requests
+  resources :comments
+  resources :photos
+  
+  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+
+  # Defines the root path route ("/")
+  # root "articles#index"
+
+  get ":username/liked" => "photos#liked", as: :liked_photos
+  get ":username/feed" => "photos#feed", as: :feed_photos
+  get ":username/followers" => "photos#followers", as: :followers_photos
+  get ":username/following" => "photos#following", as: :following_photos
+
+  get ":username" => "users#show", as: :user
+
+end 
+```
+
+- Controller
+
+```
+#controllers/photos_controller.rb
+
+  def followers
+    
+  end
+
+  def following
+
+  end
+```
+- Views 
+
+```
+#views/photos/followers.html.erb
+
+<div clas"row">
+  <div class="col-md-6 offset-md-3">
+
+    <h1>
+      <%= current_user.username %>
+    </h1>
+
+    <ul class="nav nav-pills nav-justified">
+
+      <li class="nav-item">
+        <%= link_to "Posts", user_path(current_user.username), class: "nav-link" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Liked photos", liked_photos_path(current_user.username), class: "nav-link" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Followers", followers_photos_path(current_user.username), style: "color: red;", class: "nav-link" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Following", following_photos_path(current_user.username), class: "nav-link" %>
+      </li>
+    </ul>
+
+  </div>
+</div>
+
+<%followers = FollowRequest.where(:recipient_id => current_user.id).where(:status=>"accepted")%>
+<%= followers.count%>
+
+<% followers.each do |follower| %>
+  <ul class="list-group">
+    <li class="list-group-item"><%=User.where(:id=>follower.sender_id)[0].username%></li>
+  </ul>
+<% end %>
+```
+
+and
+
+```
+#views/photos/following.html.erb
+
+...
+```
+
+### F. ActiveRecord TIPS
+
+1. I realized that relationship methods are defined in the models folder and can be easily called to derive certain objects. 
+2. To obtain the leaders and followers, take a look at models/users.rb class:
+
+```
+# == Schema Information
+#
+# Table name: users
+#
+#  id                     :bigint           not null, primary key
+#  comments_count         :integer          default(0)
+#  email                  :citext           default(""), not null
+#  encrypted_password     :string           default(""), not null
+#  likes_count            :integer          default(0)
+#  photos_count           :integer          default(0)
+#  private                :boolean          default(TRUE)
+#  remember_created_at    :datetime
+#  reset_password_sent_at :datetime
+#  reset_password_token   :string
+#  username               :citext
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#
+# Indexes
+#
+#  index_users_on_email                 (email) UNIQUE
+#  index_users_on_reset_password_token  (reset_password_token) UNIQUE
+#  index_users_on_username              (username) UNIQUE
+#
+class User < ApplicationRecord
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable
+
+  has_many :own_photos, class_name: "Photo", foreign_key: "owner_id" 
+  has_many :comments, foreign_key: "author_id"
+
+  has_many :sent_follow_requests, foreign_key: :sender_id, class_name: "FollowRequest", dependent: :destroy
+  has_many :accepted_sent_follow_requests, -> { accepted }, foreign_key: :sender_id, class_name: "FollowRequest"
+  
+  has_many :received_follow_requests, foreign_key: :recipient_id, class_name: "FollowRequest"
+  has_many :accepted_received_follow_requests, -> { accepted }, foreign_key: :recipient_id, class_name: "FollowRequest"
+
+  has_many :likes, foreign_key: :fan_id
+
+  has_many :own_photos, foreign_key: :owner_id, class_name: "Photo"
+
+  has_many :liked_photos, through: :likes, source: :photo
+
+  has_many :leaders, through: :accepted_sent_follow_requests, source: :recipient
+
+  has_many :followers, through: :accepted_received_follow_requests, source: :sender
+
+  has_many :feed, through: :leaders, source: :own_photos
+
+  has_many :discover, through: :leaders, source: :liked_photos
+
+  validates :username, presence: true, uniqueness: true
+end
+```
+
+Notice that there are methods called `followers` and `leaders` that you can use directly.
+
+- Change the following:
+
+```
+#views/photos/feed.html.erb
+
+<%followings = FollowRequest.where(:sender_id => current_user.id).where(:status=>"accepted")%>
+<%= followings.count%>
+
+<% followings.each do |following| %>
+  <% User.where(:id=>following.recipient_id)[0].own_photos.each do |photo| %>
+      <%= render "photos/photo", photo: photo %>
+  <% end %>
+<% end %>
+```
+
+To:
+
+```
+#views/photos/feed.html.erb
+
+<%=current_user.leaders.count %>
+
+<% current_user.leaders.each do |leader| %>
+  <% leader.own_photos.each do |photo| %>
+      <%= render "photos/photo", photo: photo %>
+  <% end %>
+<% end %>
+```
+
+- Also change the following:
+
+```
+#views/photos/followers.html.erb
+
+
+<%followers = FollowRequest.where(:recipient_id => current_user.id).where(:status=>"accepted")%>
+<%= followers.count%>
+
+<div class="row mb-4">
+    <div class="col-md-6 offset-md-3">
+      <div class="card">
+
+        <% followers.each do |follower| %>
+          <ul class="list-group">
+            <li class="list-group-item"><%=User.where(:id=>follower.sender_id)[0].username%></li>
+          </ul>
+        <% end %>
+   
+    </div>
+  </div>
+</div>
+```
+To:
+
+```
+#views/photos/followers.html.erb
+
+<%= current_user.followers.count%>
+
+<div class="row mb-4">
+    <div class="col-md-6 offset-md-3">
+      <div class="card">
+
+        <% current_user.followers.each do |follower| %>
+          <ul class="list-group">
+            <li class="list-group-item"><%=follower.username%></li>
+          </ul>
+        <% end %>
+   
+    </div>
+  </div>
+</div>
+```
+
+- Finally, change the following:
+
+
+
+```
+#views/photos/following.html.erb
+
+<%followings = FollowRequest.where(:sender_id => current_user.id).where(:status=>"accepted")%>
+<%= followings.count%>
+
+<div class="row mb-4">
+    <div class="col-md-6 offset-md-3">
+      <div class="card">
+
+        <% followings.each do |following| %>
+          <ul class="list-group">
+            <li class="list-group-item"><%=User.where(:id=>following.recipient_id)[0].username%></li>
+          </ul>
+        <% end %>
+   
+    </div>
+  </div>
+</div>
+```
+
+To:
+
+```
+#views/photos/following.html.erb
+
+<%= current_user.leaders.count%>
+
+<div class="row mb-4">
+    <div class="col-md-6 offset-md-3">
+      <div class="card">
+
+        <% current_user.leaders.each do |leader| %>
+          <ul class="list-group">
+            <li class="list-group-item"><%=leader.username%></li>
+          </ul>
+        <% end %>
+   
+    </div>
+  </div>
+</div>
+```
+
+3. Still passed all tests from rake grade after implementing the modifications.
+
+4. Made further changes to feed.html.erb by implementing the feed encapsulated method within Users table:
+
+From:
+```
+<%=current_user.leaders.count %>
+
+<% current_user.leaders.each do |leader| %>
+  <% leader.own_photos.each do |photo| %>
+      <%= render "photos/photo", photo: photo %>
+  <% end %>
+<% end %>
+```
+
+To:
+```
+<%=current_user.feed.count %>
+
+<% current_user.feed.each do |photo| %>
+  <%= render "photos/photo", photo: photo %>
+<% end %>
+```
 
 <hr>
 

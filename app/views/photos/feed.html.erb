@@ -5,13 +5,13 @@
       <%= current_user.username %>
     </h1>
 
-    <%= render "shared/tab", active_tab: "Posts" %>
+    <%= render "shared/tab", active_tab: "Feed" %>
 
   </div>
 </div>
 
-<%= current_user.own_photos.count %>
+<%=current_user.feed.count %>
 
-<% current_user.own_photos.each do |photo| %>
+<% current_user.feed.each do |photo| %>
   <%= render "photos/photo", photo: photo %>
 <% end %>
